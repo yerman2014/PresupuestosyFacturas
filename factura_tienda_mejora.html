@@ -2,13 +2,7 @@
 <!DOCTYPE html>
 
 <html lang="es">
-<head><script>
-  // Verificar si la sesión fue iniciada desde index.html
-  if (!sessionStorage.getItem("sesion_iniciada")) {
-    alert("Debe iniciar sesión desde index.html.");
-    window.location.href = "index.html";
-  }
-</script>
+<head>
 <meta charset="utf-8"/>
 <title>Factura - Mi Tienda</title>
 <style>
@@ -21,8 +15,8 @@
   </style>
 </head>
 <body>
-<h1>Factura - <span id="nombreTienda">Mi Tienda</span></h1>
-<h3>Configuración de la tienda</h3>
+<h1>Factura - <select id="tipoDocumento"><option value="Factura">Factura</option><option value="Presupuesto">Presupuesto</option></select><span id="nombreTienda">Mi Tienda</span></h1>
+<h3>Configuración de la tienda</h3><input id="numeroFactura" placeholder="Número inicial de factura" type="number"/>
 <input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
 <input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
 <button onclick="guardarTienda()">Guardar datos de la tienda</button>
@@ -53,6 +47,52 @@
 <div class="total" id="total">Total: €0.00</div>
 <button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>
 <script>
+    // Manejo del tipo de documento y número de factura
+    window.onload = () => {
+      cargarTienda();
+      cargarClientes();
+      agregarFila();
+      cargarNumeroFactura();
+      actualizarTitulo();
+      document.getElementById("tipoDocumento").addEventListener("change", actualizarTitulo);
+    };
+
+    function actualizarTitulo() {
+      const tipo = document.getElementById("tipoDocumento").value;
+      const nombre = localStorage.getItem("tiendaNombre") || "Mi Tienda";
+      document.getElementById("nombreTienda").textContent = nombre;
+      document.querySelector("h1").textContent = tipo + " - " + nombre;
+    }
+
+    function guardarNumeroFactura() {
+      const numero = document.getElementById("numeroFactura").value;
+      localStorage.setItem("numeroFactura", numero);
+      alert("Número de factura guardado");
+    }
+
+    function cargarNumeroFactura() {
+      const numero = localStorage.getItem("numeroFactura") || "1";
+      document.getElementById("numeroFactura").value = numero;
+    }
+
+    function guardarFactura() {
+      const factura = [];
+      document.querySelectorAll("#factura tbody tr").forEach(fila => {
+        const producto = fila.children[0].children[0].value;
+        const cantidad = parseFloat(fila.children[1].children[0].value) || 0;
+        const precio = parseFloat(fila.children[2].children[0].value) || 0;
+        const subtotal = cantidad * precio;
+        factura.push({ producto, cantidad, precio, subtotal });
+      });
+      const total = document.getElementById("total").textContent;
+      const numero = localStorage.getItem("numeroFactura") || "1";
+      const tipo = document.getElementById("tipoDocumento").value;
+      localStorage.setItem("facturaGuardada_" + numero, JSON.stringify({ tipo, factura, total }));
+      localStorage.setItem("numeroFactura", parseInt(numero) + 1);
+      alert(tipo + " guardado con número #" + numero);
+      cargarNumeroFactura();
+    }
+    
     window.onload = () => {
       cargarTienda();
       cargarClientes();
