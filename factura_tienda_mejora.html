@@ -1,200 +1,205 @@
-
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
 <title>Factura - Mi Tienda</title>
 <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    input, select { width: 100%; box-sizing: border-box; margin-bottom: 10px; }
-    .total { font-weight: bold; text-align: right; margin-top: 10px; }
-    .btn { margin-top: 20px; padding: 10px 20px; }
-  </style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  input, select { width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+  .total { font-weight: bold; text-align: right; margin-top: 10px; }
+  .btn { margin-top: 20px; padding: 10px 20px; }
+
+  /* --- Estilos impresión --- */
+  @media print {
+    button, input, select { display: none !important; }
+    .config-tienda { text-align: right; font-size: 12px; margin-bottom: 20px; }
+    h3 { display: none; }
+  }
+</style>
 </head>
 <body>
-<h1>Factura - <select id="tipoDocumento"><option value="Factura">Factura</option><option value="Presupuesto">Presupuesto</option></select><span id="nombreTienda">Mi Tienda</span></h1>
-<h3>Configuración de la tienda</h3><input id="numeroFactura" placeholder="Número inicial de factura" type="number"/>
-<input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
-<input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
-<button onclick="guardarTienda()">Guardar datos de la tienda</button>
-<h3>Datos del cliente</h3>
-<select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
-<button onclick="mostrarFormularioCliente()">Añadir cliente</button>
-<div id="formCliente" style="display:none;">
-<input id="clienteNombre" placeholder="Nombre" type="text"/>
-<input id="clienteDireccion" placeholder="Dirección" type="text"/>
-<input id="clienteTelefono" placeholder="Teléfono" type="text"/>
-<input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
-<button onclick="guardarCliente()">Guardar cliente</button>
-</div>
-<div id="datosCliente"></div>
-<table id="factura">
-<thead>
-<tr>
-<th>Producto</th>
-<th>Cantidad</th>
-<th>Precio Unitario (€)</th>
-<th>Subtotal (€)</th>
-<th></th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-<button onclick="agregarFila()">Agregar producto</button>
-<div class="total" id="total">Total: €0.00</div>
-<button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>
+  <h1>
+    <select id="tipoDocumento">
+      <option value="Factura">Factura</option>
+      <option value="Presupuesto">Presupuesto</option>
+    </select>
+    <span id="nombreTienda">Mi Tienda</span>
+  </h1>
+
+  <!-- Configuración tienda -->
+  <div class="config-tienda">
+    <span id="datosTiendaCondensados"></span>
+  </div>
+
+  <h3>Configuración de la tienda</h3>
+  <input id="numeroFactura" placeholder="Número inicial de factura" type="number"/>
+  <input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
+  <input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
+  <button onclick="guardarTienda()">Guardar datos de la tienda</button>
+
+  <h3>Datos del cliente</h3>
+  <select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
+  <button onclick="mostrarFormularioCliente()">Añadir cliente</button>
+
+  <div id="formCliente" style="display:none;">
+    <input id="clienteNombre" placeholder="Nombre" type="text"/>
+    <input id="clienteDireccion" placeholder="Dirección" type="text"/>
+    <input id="clienteTelefono" placeholder="Teléfono" type="text"/>
+    <input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
+    <button onclick="guardarCliente()">Guardar cliente</button>
+  </div>
+
+  <div id="datosCliente"></div>
+
+  <table id="factura">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario (€)</th>
+        <th>Subtotal (€)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button onclick="agregarFila()">Agregar producto</button>
+  <div class="total" id="total">Total: €0.00</div>
+  <button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>
+
 <script>
-    // Manejo del tipo de documento y número de factura
-    window.onload = () => {
-      cargarTienda();
-      cargarClientes();
-      agregarFila();
-      cargarNumeroFactura();
-      actualizarTitulo();
-      document.getElementById("tipoDocumento").addEventListener("change", actualizarTitulo);
-    };
+  window.onload = () => {
+    cargarTienda();
+    cargarClientes();
+    agregarFila();
+    cargarNumeroFactura();
+    actualizarTitulo();
+    document.getElementById("tipoDocumento").addEventListener("change", actualizarTitulo);
+  };
 
-    function actualizarTitulo() {
-      const tipo = document.getElementById("tipoDocumento").value;
-      const nombre = localStorage.getItem("tiendaNombre") || "Mi Tienda";
-      document.getElementById("nombreTienda").textContent = nombre;
-      document.querySelector("h1").textContent = tipo + " - " + nombre;
-    }
+  function actualizarTitulo() {
+    const tipo = document.getElementById("tipoDocumento").value;
+    const nombre = localStorage.getItem("tiendaNombre") || "Mi Tienda";
+    document.getElementById("nombreTienda").textContent = nombre;
+    document.querySelector("h1").textContent = tipo + " - " + nombre;
+  }
 
-    function guardarNumeroFactura() {
-      const numero = document.getElementById("numeroFactura").value;
-      localStorage.setItem("numeroFactura", numero);
-      alert("Número de factura guardado");
-    }
+  function guardarNumeroFactura() {
+    const numero = document.getElementById("numeroFactura").value;
+    localStorage.setItem("numeroFactura", numero);
+    alert("Número de factura guardado");
+  }
 
-    function cargarNumeroFactura() {
-      const numero = localStorage.getItem("numeroFactura") || "1";
-      document.getElementById("numeroFactura").value = numero;
-    }
+  function cargarNumeroFactura() {
+    const numero = localStorage.getItem("numeroFactura") || "1";
+    document.getElementById("numeroFactura").value = numero;
+  }
 
-    function guardarFactura() {
-      const factura = [];
-      document.querySelectorAll("#factura tbody tr").forEach(fila => {
-        const producto = fila.children[0].children[0].value;
-        const cantidad = parseFloat(fila.children[1].children[0].value) || 0;
-        const precio = parseFloat(fila.children[2].children[0].value) || 0;
-        const subtotal = cantidad * precio;
-        factura.push({ producto, cantidad, precio, subtotal });
-      });
-      const total = document.getElementById("total").textContent;
-      const numero = localStorage.getItem("numeroFactura") || "1";
-      const tipo = document.getElementById("tipoDocumento").value;
-      localStorage.setItem("facturaGuardada_" + numero, JSON.stringify({ tipo, factura, total }));
-      localStorage.setItem("numeroFactura", parseInt(numero) + 1);
-      alert(tipo + " guardado con número #" + numero);
-      cargarNumeroFactura();
-    }
-    
-    window.onload = () => {
-      cargarTienda();
-      cargarClientes();
-      agregarFila();
-    };
+  function guardarTienda() {
+    const nombre = document.getElementById("tiendaNombre").value;
+    const direccion = document.getElementById("tiendaDireccion").value;
+    localStorage.setItem("tiendaNombre", nombre);
+    localStorage.setItem("tiendaDireccion", direccion);
+    document.getElementById("nombreTienda").textContent = nombre || "Mi Tienda";
 
-    function guardarTienda() {
-      const nombre = document.getElementById("tiendaNombre").value;
-      const direccion = document.getElementById("tiendaDireccion").value;
-      localStorage.setItem("tiendaNombre", nombre);
-      localStorage.setItem("tiendaDireccion", direccion);
-      document.getElementById("nombreTienda").textContent = nombre || "Mi Tienda";
-      alert("Datos de la tienda guardados");
-    }
+    // Actualizar versión condensada
+    document.getElementById("datosTiendaCondensados").textContent =
+      (nombre || "Mi Tienda") + " - " + (direccion || "");
+    alert("Datos de la tienda guardados");
+  }
 
-    function cargarTienda() {
-      const nombre = localStorage.getItem("tiendaNombre") || "Mi Tienda";
-      const direccion = localStorage.getItem("tiendaDireccion") || "";
-      document.getElementById("nombreTienda").textContent = nombre;
-      document.getElementById("tiendaNombre").value = nombre;
-      document.getElementById("tiendaDireccion").value = direccion;
-    }
+  function cargarTienda() {
+    const nombre = localStorage.getItem("tiendaNombre") || "Mi Tienda";
+    const direccion = localStorage.getItem("tiendaDireccion") || "";
+    document.getElementById("nombreTienda").textContent = nombre;
+    document.getElementById("tiendaNombre").value = nombre;
+    document.getElementById("tiendaDireccion").value = direccion;
+    document.getElementById("datosTiendaCondensados").textContent =
+      nombre + (direccion ? " - " + direccion : "");
+  }
 
-    function mostrarFormularioCliente() {
-      document.getElementById("formCliente").style.display = "block";
-    }
+  function mostrarFormularioCliente() {
+    document.getElementById("formCliente").style.display = "block";
+  }
 
-    function guardarCliente() {
-      const nombre = document.getElementById("clienteNombre").value;
-      const direccion = document.getElementById("clienteDireccion").value;
-      const telefono = document.getElementById("clienteTelefono").value;
-      const email = document.getElementById("clienteEmail").value;
-      if (!nombre) return alert("Introduce el nombre del cliente");
-      let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-      clientes.push({ nombre, direccion, telefono, email });
-      localStorage.setItem("clientes", JSON.stringify(clientes));
-      cargarClientes();
-      document.getElementById("formCliente").style.display = "none";
-      document.getElementById("clienteNombre").value = "";
-      document.getElementById("clienteDireccion").value = "";
-      document.getElementById("clienteTelefono").value = "";
-      document.getElementById("clienteEmail").value = "";
-    }
+  function guardarCliente() {
+    const nombre = document.getElementById("clienteNombre").value;
+    const direccion = document.getElementById("clienteDireccion").value;
+    const telefono = document.getElementById("clienteTelefono").value;
+    const email = document.getElementById("clienteEmail").value;
+    if (!nombre) return alert("Introduce el nombre del cliente");
+    let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+    clientes.push({ nombre, direccion, telefono, email });
+    localStorage.setItem("clientes", JSON.stringify(clientes));
+    cargarClientes();
+    document.getElementById("formCliente").style.display = "none";
+    document.getElementById("clienteNombre").value = "";
+    document.getElementById("clienteDireccion").value = "";
+    document.getElementById("clienteTelefono").value = "";
+    document.getElementById("clienteEmail").value = "";
+  }
 
-    function cargarClientes() {
-      const select = document.getElementById("clienteSelect");
-      select.innerHTML = "";
-      let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-      clientes.forEach((cliente, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = cliente.nombre;
-        select.appendChild(option);
-      });
-      mostrarClienteSeleccionado();
-    }
+  function cargarClientes() {
+    const select = document.getElementById("clienteSelect");
+    select.innerHTML = "";
+    let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+    clientes.forEach((cliente, index) => {
+      const option = document.createElement("option");
+      option.value = index;
+      option.textContent = cliente.nombre;
+      select.appendChild(option);
+    });
+    mostrarClienteSeleccionado();
+  }
 
-    function mostrarClienteSeleccionado() {
-      const index = document.getElementById("clienteSelect").value;
-      let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-      const cliente = clientes[index];
-      if (cliente) {
-        document.getElementById("datosCliente").innerHTML = `
-          <p><strong>Dirección:</strong> ${cliente.direccion}</p>
-          <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
-          <p><strong>Email:</strong> ${cliente.email}</p>
-        `;
-      } else {
-        document.getElementById("datosCliente").innerHTML = "";
-      }
-    }
-
-    function agregarFila() {
-      const tabla = document.querySelector("#factura tbody");
-      const fila = document.createElement("tr");
-      fila.innerHTML = `
-        <td><input type="text" placeholder="Producto"></td>
-        <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
-        <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
-        <td class="subtotal">0.00</td>
-        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+  function mostrarClienteSeleccionado() {
+    const index = document.getElementById("clienteSelect").value;
+    let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+    const cliente = clientes[index];
+    if (cliente) {
+      document.getElementById("datosCliente").innerHTML = `
+        <p><strong>Dirección:</strong> ${cliente.direccion}</p>
+        <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
+        <p><strong>Email:</strong> ${cliente.email}</p>
       `;
-      tabla.appendChild(fila);
-      calcularTotal();
+    } else {
+      document.getElementById("datosCliente").innerHTML = "";
     }
+  }
 
-    function eliminarFila(btn) {
-      btn.closest("tr").remove();
-      calcularTotal();
-    }
+  function agregarFila() {
+    const tabla = document.querySelector("#factura tbody");
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td><input type="text" placeholder="Producto"></td>
+      <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
+      <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
+      <td class="subtotal">0.00</td>
+      <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+    `;
+    tabla.appendChild(fila);
+    calcularTotal();
+  }
 
-    function calcularTotal() {
-      let total = 0;
-      document.querySelectorAll("#factura tbody tr").forEach(fila => {
-        const cantidad = parseFloat(fila.children[1].children[0].value) || 0;
-        const precio = parseFloat(fila.children[2].children[0].value) || 0;
-        const subtotal = cantidad * precio;
-        fila.children[3].textContent = subtotal.toFixed(2);
-        total += subtotal;
-      });
-      document.getElementById("total").textContent = `Total: €${total.toFixed(2)}`;
-    }
-  </script>
+  function eliminarFila(btn) {
+    btn.closest("tr").remove();
+    calcularTotal();
+  }
+
+  function calcularTotal() {
+    let total = 0;
+    document.querySelectorAll("#factura tbody tr").forEach(fila => {
+      const cantidad = parseFloat(fila.children[1].children[0].value) || 0;
+      const precio = parseFloat(fila.children[2].children[0].value) || 0;
+      const subtotal = cantidad * precio;
+      fila.children[3].textContent = subtotal.toFixed(2);
+      total += subtotal;
+    });
+    document.getElementById("total").textContent = `Total: €${total.toFixed(2)}`;
+  }
+</script>
 </body>
 </html>
