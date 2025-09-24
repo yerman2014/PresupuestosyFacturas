@@ -1,19 +1,17 @@
 
 <!DOCTYPE html>
-<html lang="es">
-<head>
 
-<script>
-  // Verificar si el usuario ha iniciado sesión
-  if (!localStorage.getItem("usuario_logueado")) {
-    alert("Debe iniciar sesión primero.");
+<html lang="es">
+<head><script>
+  // Verificar si el usuario ha iniciado sesión y viene del index.html
+  if (!sessionStorage.getItem("sesion_iniciada")) {
+    alert("Debe iniciar sesión desde el index.");
     window.location.href = "index.html";
   }
 </script>
-
-  <meta charset="UTF-8">
-  <title>Factura - Mi Tienda</title>
-  <style>
+<meta charset="utf-8"/>
+<title>Factura - Mi Tienda</title>
+<style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
@@ -23,47 +21,38 @@
   </style>
 </head>
 <body>
-  <h1>Factura - <span id="nombreTienda">Mi Tienda</span></h1>
-
-  <h3>Configuración de la tienda</h3>
-  <input type="text" id="tiendaNombre" placeholder="Nombre de la tienda">
-  <input type="text" id="tiendaDireccion" placeholder="Dirección de la tienda">
-  <button onclick="guardarTienda()">Guardar datos de la tienda</button>
-
-  <h3>Datos del cliente</h3>
-  <select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
-  <button onclick="mostrarFormularioCliente()">Añadir cliente</button>
-
-  <div id="formCliente" style="display:none;">
-    <input type="text" id="clienteNombre" placeholder="Nombre">
-    <input type="text" id="clienteDireccion" placeholder="Dirección">
-    <input type="text" id="clienteTelefono" placeholder="Teléfono">
-    <input type="email" id="clienteEmail" placeholder="Correo electrónico">
-    <button onclick="guardarCliente()">Guardar cliente</button>
-  </div>
-
-  <div id="datosCliente"></div>
-
-  <table id="factura">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio Unitario (€)</th>
-        <th>Subtotal (€)</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <button onclick="agregarFila()">Agregar producto</button>
-
-  <div class="total" id="total">Total: €0.00</div>
-
-  <button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>
-
-  <script>
+<h1>Factura - <span id="nombreTienda">Mi Tienda</span></h1>
+<h3>Configuración de la tienda</h3>
+<input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
+<input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
+<button onclick="guardarTienda()">Guardar datos de la tienda</button>
+<h3>Datos del cliente</h3>
+<select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
+<button onclick="mostrarFormularioCliente()">Añadir cliente</button>
+<div id="formCliente" style="display:none;">
+<input id="clienteNombre" placeholder="Nombre" type="text"/>
+<input id="clienteDireccion" placeholder="Dirección" type="text"/>
+<input id="clienteTelefono" placeholder="Teléfono" type="text"/>
+<input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
+<button onclick="guardarCliente()">Guardar cliente</button>
+</div>
+<div id="datosCliente"></div>
+<table id="factura">
+<thead>
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio Unitario (€)</th>
+<th>Subtotal (€)</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button onclick="agregarFila()">Agregar producto</button>
+<div class="total" id="total">Total: €0.00</div>
+<button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>
+<script>
     window.onload = () => {
       cargarTienda();
       cargarClientes();
