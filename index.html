@@ -1,4 +1,4 @@
-el login lo hago con index.html <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -53,7 +53,6 @@ el login lo hago con index.html <!DOCTYPE html>
   </div>
 
   <script>
-    // Credenciales predefinidas
     const credenciales = {
       usuario: "admin",
       contrasena: "1234"
@@ -65,12 +64,13 @@ el login lo hago con index.html <!DOCTYPE html>
       const errorMsg = document.getElementById("errorMsg");
 
       if (usuario === credenciales.usuario && contrasena === credenciales.contrasena) {
+        localStorage.setItem("usuario_logueado", "true"); // 
         errorMsg.textContent = "";
-        window.location.href = "factura_tienda_mejora.html";
+        window.location.href = "factura_tienda_mejora.html"; // 
       } else {
         errorMsg.textContent = "Usuario o contraseña incorrectos.";
       }
     }
   </script>
 </body>
-</html> y la pagina de facturas sin login pero si no viene del index con login correcto que no le deje entrar
+</html>
