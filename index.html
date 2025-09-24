@@ -5,33 +5,44 @@
   <title>Acceso a Facturación</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f4f4f4;
     }
     .login-box {
-      background: white;
-      padding: 20px;
+      background-color: #ffffff;
+      padding: 30px;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
     }
     input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
       box-sizing: border-box;
+      font-size: 14px;
     }
     button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       background-color: #007bff;
       color: white;
       border: none;
       border-radius: 4px;
+      font-size: 16px;
       cursor: pointer;
     }
     button:hover {
@@ -40,6 +51,13 @@
     .error {
       color: red;
       text-align: center;
+      margin-top: 10px;
+    }
+    .footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 12px;
+      color: #888;
     }
   </style>
 </head>
@@ -51,6 +69,7 @@
     <button onclick="login()">Entrar</button>
     <div class="error" id="errorMsg"></div>
   </div>
+  <div class="footer">© 2024 Mi Empresa - Sistema de Facturación</div>
 
   <script>
     const credenciales = {
@@ -64,9 +83,10 @@
       const errorMsg = document.getElementById("errorMsg");
 
       if (usuario === credenciales.usuario && contrasena === credenciales.contrasena) {
-        localStorage.setItem("usuario_logueado", "true"); // 
+        localStorage.setItem("usuario_logueado", "true");
+        sessionStorage.setItem("sesion_iniciada", "true");
         errorMsg.textContent = "";
-        window.location.href = "factura_tienda_mejora.html"; // 
+        window.location.href = "factura_tienda_mejora.html";
       } else {
         errorMsg.textContent = "Usuario o contraseña incorrectos.";
       }
