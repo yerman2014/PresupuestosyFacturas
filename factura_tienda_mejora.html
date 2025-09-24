@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="es">
@@ -16,16 +15,17 @@
 
 <script>
   // Verifica si el usuario ha iniciado sesión
-  if (!sessionStorage.getItem("usuarioLogueado")) {
+  if (localStorage.getItem("usuario_logueado") !== "true" || sessionStorage.getItem("sesion_iniciada") !== "true") {
     alert("Debes iniciar sesión primero.");
     window.location.href = "index.html";
   }
 
   // Función para cerrar sesión
   function logout() {
-    sessionStorage.removeItem("usuarioLogueado");
-    window.location.href = "index.html";
-  }
+  localStorage.removeItem("usuario_logueado");
+  sessionStorage.removeItem("sesion_iniciada");
+  window.location.href = "index.html";
+}
 </script>
 
 </head>
@@ -230,16 +230,17 @@ function imprimirYRecargar() {
 
 <script>
   // Verifica si el usuario ha iniciado sesión
-  if (!sessionStorage.getItem("usuarioLogueado")) {
+  if (localStorage.getItem("usuario_logueado") !== "true" || sessionStorage.getItem("sesion_iniciada") !== "true") {
     alert("Debes iniciar sesión primero.");
     window.location.href = "index.html";
   }
 
   // Función para cerrar sesión
   function logout() {
-    sessionStorage.removeItem("usuarioLogueado");
-    window.location.href = "index.html";
-  }
+  localStorage.removeItem("usuario_logueado");
+  sessionStorage.removeItem("sesion_iniciada");
+  window.location.href = "index.html";
+}
 </script>
 
 </head>
