@@ -1,114 +1,58 @@
 
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Factura - Mi Tienda</title>
-  
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 40px;
-    background-color: #f9f9f9;
-    color: #333;
-  }
-  h1, h3 {
-    color: #2c3e50;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #fff;
-  }
-  th {
-    background-color: #34495e;
-    color: white;
-    padding: 10px;
-  }
-  td {
-    border: 1px solid #ccc;
-    padding: 8px;
-  }
-  input, select {
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  .btn {
-    background-color: #2980b9;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .btn:hover {
-    background-color: #1c5980;
-  }
-  .logout {
-    background-color: #e74c3c;
-  }
-  .logout:hover {
-    background-color: #c0392b;
-  }
-  .total {
-    font-weight: bold;
-    text-align: right;
-    margin-top: 20px;
-    font-size: 1.2em;
-  }
-</style>
 
+<html lang="es">
+<head><script>
+  // Verificar si la sesión fue iniciada desde index.html
+  if (!sessionStorage.getItem("sesion_iniciada")) {
+    alert("Debe iniciar sesión desde index.html.");
+    window.location.href = "index.html";
+  }
+</script>
+<meta charset="utf-8"/>
+<title>Factura - Mi Tienda</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    input, select { width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+    .total { font-weight: bold; text-align: right; margin-top: 10px; }
+    .btn { margin-top: 20px; padding: 10px 20px; }
+  </style>
 </head>
 <body>
-  <h1>Factura - <span id="nombreTienda">Mi Tienda</span></h1>
-
-  <h3>Configuración de la tienda</h3>
-  <input type="text" id="tiendaNombre" placeholder="Nombre de la tienda">
-  <input type="text" id="tiendaDireccion" placeholder="Dirección de la tienda">
-  <button onclick="guardarTienda()">Guardar datos de la tienda</button>
-
-  <h3>Datos del cliente</h3>
-  <select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
-  <button onclick="mostrarFormularioCliente()">Añadir cliente</button>
-
-  <div id="formCliente" style="display:none;">
-    <input type="text" id="clienteNombre" placeholder="Nombre">
-    <input type="text" id="clienteDireccion" placeholder="Dirección">
-    <input type="text" id="clienteTelefono" placeholder="Teléfono">
-    <input type="email" id="clienteEmail" placeholder="Correo electrónico">
-    <button onclick="guardarCliente()">Guardar cliente</button>
-  </div>
-
-  <div id="datosCliente"></div>
-
-  <table id="factura">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio Unitario (€)</th>
-        <th>Subtotal (€)</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <button onclick="agregarFila()">Agregar producto</button>
-
-  <div class="total" id="total">Total: €0.00</div>
-
-  
-<button class="btn logout" onclick="logout()">Cerrar sesión</button>
-
-<button class="btn" onclick="guardarFactura()">Guardar factura</button>
+<h1>Factura - <span id="nombreTienda">Mi Tienda</span></h1>
+<h3>Configuración de la tienda</h3>
+<input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
+<input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
+<button onclick="guardarTienda()">Guardar datos de la tienda</button>
+<h3>Datos del cliente</h3>
+<select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
+<button onclick="mostrarFormularioCliente()">Añadir cliente</button>
+<div id="formCliente" style="display:none;">
+<input id="clienteNombre" placeholder="Nombre" type="text"/>
+<input id="clienteDireccion" placeholder="Dirección" type="text"/>
+<input id="clienteTelefono" placeholder="Teléfono" type="text"/>
+<input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
+<button onclick="guardarCliente()">Guardar cliente</button>
+</div>
+<div id="datosCliente"></div>
+<table id="factura">
+<thead>
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio Unitario (€)</th>
+<th>Subtotal (€)</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button onclick="agregarFila()">Agregar producto</button>
+<div class="total" id="total">Total: €0.00</div>
 <button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button>
-
-  <script>
+<script>
     window.onload = () => {
       cargarTienda();
       cargarClientes();
@@ -211,28 +155,6 @@
       });
       document.getElementById("total").textContent = `Total: €${total.toFixed(2)}`;
     }
-  
-function logout() {
-  localStorage.clear();
-  sessionStorage.clear();
-  window.location.href = "index.html";
-}
-
-function guardarFactura() {
-  const factura = [];
-  document.querySelectorAll("#factura tbody tr").forEach(fila => {
-    const producto = fila.children[0].children[0].value;
-    const cantidad = parseFloat(fila.children[1].children[0].value) || 0;
-    const precio = parseFloat(fila.children[2].children[0].value) || 0;
-    const subtotal = cantidad * precio;
-    factura.push({ producto, cantidad, precio, subtotal });
-  });
-  const total = document.getElementById("total").textContent;
-  localStorage.setItem("facturaGuardada", JSON.stringify({ factura, total }));
-  alert("Factura guardada en localStorage");
-}
-
-</script>
+  </script>
 </body>
-
 </html>
