@@ -2,6 +2,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
+<script>
+  // Verificar si el usuario ha iniciado sesión
+  if (!localStorage.getItem("usuario_logueado")) {
+    alert("Debe iniciar sesión primero.");
+    window.location.href = "index.html";
+  }
+</script>
+
   <meta charset="UTF-8">
   <title>Factura - Mi Tienda</title>
   <style>
