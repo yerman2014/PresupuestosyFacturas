@@ -13,26 +13,27 @@
     .btn { margin-top: 20px; padding: 10px 20px; }
   
 @media print {
-  button, .total, #formCliente, #tiendaConfig, #clienteConfig {
+  button, .total, #tiendaConfig, #clienteConfig {
     display: none !important;
   }
-  #datosCliente {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 300px;
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
 }
-
+#datosCliente {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  width: 250px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
 </style>
 </head>
 <body>
 <button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button><button onclick="toggleSection('clienteConfig')">Mostrar/Ocultar configuración de cliente</button><div id="tiendaConfig" style="display:none;"><input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/><input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
 <input id="tiendaTelefono" placeholder="Teléfono de la tienda" type="text"/>
 <input id="tiendaNIF" placeholder="NIF/DNI de la tienda" type="text"/>
-<input id="numeroFactura" placeholder="Número de factura" type="text"/><button onclick="guardarTienda()">Guardar datos de la tienda</button></div><div id="clienteConfig" style="display:none;"><select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select><button onclick="mostrarFormularioCliente()">Añadir cliente</button><div id="formCliente" style="display:none;">
+<input id="numeroFactura" placeholder="Número de factura" type="text"/>
+<button onclick="guardarTienda()">Guardar datos de la tienda</button></div><div id="clienteConfig" style="display:none;"><select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select><button onclick="mostrarFormularioCliente()">Añadir cliente</button><div id="formCliente" style="display:none;">
 <input id="clienteNombre" placeholder="Nombre" type="text"/>
 <input id="clienteDireccion" placeholder="Dirección" type="text"/>
 <input id="clienteTelefono" placeholder="Teléfono" type="text"/>
@@ -40,13 +41,7 @@
 <button onclick="guardarCliente()">Guardar cliente</button>
 </div></div><h1>Factura - <span id="nombreTienda">Mi Tienda</span></h1>
 <h3>Configuración de la tienda</h3>
-
-
-
 <h3>Datos del cliente</h3>
-
-
-
 <div id="datosCliente"></div>
 <table id="factura">
 <thead>
@@ -80,9 +75,6 @@ function toggleSection(id) {
       const direccion = document.getElementById("tiendaDireccion").value;
       localStorage.setItem("tiendaNombre", nombre);
       localStorage.setItem("tiendaDireccion", direccion);
-localStorage.setItem("tiendaTelefono", document.getElementById("tiendaTelefono").value);
-localStorage.setItem("tiendaNIF", document.getElementById("tiendaNIF").value);
-localStorage.setItem("numeroFactura", document.getElementById("numeroFactura").value);
       document.getElementById("nombreTienda").textContent = nombre || "Mi Tienda";
       alert("Datos de la tienda guardados");
     }
@@ -93,9 +85,6 @@ localStorage.setItem("numeroFactura", document.getElementById("numeroFactura").v
       document.getElementById("nombreTienda").textContent = nombre;
       document.getElementById("tiendaNombre").value = nombre;
       document.getElementById("tiendaDireccion").value = direccion;
-document.getElementById("tiendaTelefono").value = localStorage.getItem("tiendaTelefono") || "";
-document.getElementById("tiendaNIF").value = localStorage.getItem("tiendaNIF") || "";
-document.getElementById("numeroFactura").value = localStorage.getItem("numeroFactura") || "";
     }
 
     function mostrarFormularioCliente() {
@@ -187,7 +176,6 @@ function imprimirYRecargar() {
 </script>
 </body>
 </html>
-
 <!DOCTYPE html>
 
 <html lang="es">
@@ -233,31 +221,13 @@ function imprimirYRecargar() {
     .section-toggle:hover {
         background-color: #0056b3;
     }
-    
-@media print {
-  button, .total, #formCliente, #tiendaConfig, #clienteConfig {
-    display: none !important;
-  }
-  #datosCliente {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 300px;
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
-}
-
-</style>
+    </style>
 </head>
 <body>
 <h1>Factura - <span id="nombreTienda">Mi Tienda</span></h1>
 <h3>Configuración de la tienda</h3>
 <input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
 <input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
-<input id="tiendaTelefono" placeholder="Teléfono de la tienda" type="text"/>
-<input id="tiendaNIF" placeholder="NIF/DNI de la tienda" type="text"/>
-<input id="numeroFactura" placeholder="Número de factura" type="text"/>
 <button onclick="guardarTienda()">Guardar datos de la tienda</button>
 <h3>Datos del cliente</h3>
 <select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
@@ -268,7 +238,6 @@ function imprimirYRecargar() {
 <input id="clienteTelefono" placeholder="Teléfono" type="text"/>
 <input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
 <button onclick="guardarCliente()">Guardar cliente</button>
-
 <input id="clienteEmpresa" placeholder="Empresa" type="text"/>
 <input id="clienteNIF" placeholder="NIF" type="text"/>
 <textarea id="clienteObservaciones" placeholder="Observaciones"></textarea>
@@ -301,9 +270,6 @@ function imprimirYRecargar() {
       const direccion = document.getElementById("tiendaDireccion").value;
       localStorage.setItem("tiendaNombre", nombre);
       localStorage.setItem("tiendaDireccion", direccion);
-localStorage.setItem("tiendaTelefono", document.getElementById("tiendaTelefono").value);
-localStorage.setItem("tiendaNIF", document.getElementById("tiendaNIF").value);
-localStorage.setItem("numeroFactura", document.getElementById("numeroFactura").value);
       document.getElementById("nombreTienda").textContent = nombre || "Mi Tienda";
       alert("Datos de la tienda guardados");
     }
@@ -314,9 +280,6 @@ localStorage.setItem("numeroFactura", document.getElementById("numeroFactura").v
       document.getElementById("nombreTienda").textContent = nombre;
       document.getElementById("tiendaNombre").value = nombre;
       document.getElementById("tiendaDireccion").value = direccion;
-document.getElementById("tiendaTelefono").value = localStorage.getItem("tiendaTelefono") || "";
-document.getElementById("tiendaNIF").value = localStorage.getItem("tiendaNIF") || "";
-document.getElementById("numeroFactura").value = localStorage.getItem("numeroFactura") || "";
     }
 
     function mostrarFormularioCliente() {
