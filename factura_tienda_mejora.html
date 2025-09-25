@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -67,6 +66,12 @@
     </table>
     <button onclick="agregarFila()">Agregar producto</button>
     <div class="total" id="total">Total: €0.00</div>
+<div style="margin-top: 20px;">
+  <label for="ivaPorcentaje"><strong>IVA (%):</strong></label>
+  <input id="ivaPorcentaje" type="number" value="21" min="0" step="0.01" onchange="calcularTotal()" style="width: 80px; padding: 5px; margin-left: 10px;" />
+</div>
+<div class="total" id="totalConIVA">Total con IVA: €0.00</div>
+
   </div>
 
   <button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
@@ -176,17 +181,21 @@
       calcularTotal();
     }
 
-    function calcularTotal() {
-      let total = 0;
-      document.querySelectorAll("#factura tbody tr").forEach(fila => {
-        const cantidad = parseFloat(fila.children[1].children[0].value) || 0;
-        const precio = parseFloat(fila.children[2].children[0].value) || 0;
-        const subtotal = cantidad * precio;
-        fila.children[3].textContent = subtotal.toFixed(2);
-        total += subtotal;
-      });
-      document.getElementById("total").textContent = `Total: €${total.toFixed(2)}`;
-    }
+    
+function calcularTotal() {
+  let total = 0;
+  document.querySelectorAll("#factura tbody tr").forEach(fila => {
+    const cantidad = parseFloat(fila.children[1].children[0].value) || 0;
+    const precio = parseFloat(fila.children[2].children[0].value) || 0;
+    const subtotal = cantidad * precio;
+    fila.children[3].textContent = subtotal.toFixed(2);
+    total += subtotal;
+  });
+  document.getElementById("total").textContent = `Total: €${total.toFixed(2)}`;
+  const ivaPorcentaje = parseFloat(document.getElementById("ivaPorcentaje").value) || 0;
+  const totalConIVA = total + (total * ivaPorcentaje / 100);
+  document.getElementById("totalConIVA").textContent = `Total con IVA: €${totalConIVA.toFixed(2)}`;
+}
 
     function cargarNumeroFactura() {
       const numero = localStorage.getItem("numeroFactura") || "0001";
