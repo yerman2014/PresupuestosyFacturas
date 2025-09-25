@@ -2,14 +2,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<script>
-// Verifica si la sesión está iniciada
-if (sessionStorage.getItem("sesion_iniciada") !== "true") {
-  alert("Acceso no autorizado. Por favor, inicia sesión.");
-  window.location.href = "index.html";
-}
-</script>
-
   <meta charset="utf-8"/>
   <title>Factura - Mi Tienda</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -22,6 +14,15 @@ if (sessionStorage.getItem("sesion_iniciada") !== "true") {
     .btn { margin-top: 20px; padding: 10px 20px; }
     #configuracion { margin-bottom: 20px; }
   </style>
+
+<script>
+// Verifica si la sesión está iniciada desde index.html
+if (sessionStorage.getItem("sesion_iniciada") !== "true") {
+  alert("Acceso no autorizado. Por favor, inicia sesión desde la página principal.");
+  window.location.href = "index.html";
+}
+</script>
+
 </head>
 <body>
   <div id="configuracion">
@@ -234,3 +235,4 @@ function calcularTotal() {
   </script>
 </body>
 </html>
+
