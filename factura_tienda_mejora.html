@@ -250,5 +250,44 @@ function calcularTotal() {
       window.location.href = "index.html";
     }
   </script>
+  
+<script>
+  function toggleSection(id) {
+    const section = document.getElementById(id);
+    section.style.display = section.style.display === "none" ? "block" : "none";
+  }
+
+  function toggleTipoDocumento() {
+    const container = document.getElementById("tipoDocumentoContainer");
+    container.style.display = container.style.display === "none" ? "block" : "none";
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const tipoDocumentoSelect = document.getElementById("tipoDocumento");
+    const tipoDocumentoLabel = document.getElementById("tipoDocumentoLabel");
+
+    function actualizarTipoDocumento() {
+      const tipo = tipoDocumentoSelect.value;
+      let texto = "Nº ";
+      switch (tipo) {
+        case "albaran":
+          texto += "Albarán:";
+          break;
+        case "presupuesto":
+          texto += "Presupuesto:";
+          break;
+        case "factura":
+        default:
+          texto += "Factura:";
+          break;
+      }
+      tipoDocumentoLabel.innerHTML = `<strong>${texto}</strong>`;
+    }
+
+    tipoDocumentoSelect.addEventListener("change", actualizarTipoDocumento);
+    actualizarTipoDocumento(); // Inicializa al cargar
+  });
+</script>
+
 </body>
 </html>
