@@ -96,6 +96,14 @@
   <button onclick="logout()">Cerrar sesión</button>
 
   <script>
+
+
+    
+function toggleTipoDocumento() {
+  const container = document.getElementById("tipoDocumentoContainer");
+  container.style.display = container.style.display === "none" ? "block" : "none";
+}
+
     function toggleSection(id) {
       const section = document.getElementById(id);
       section.style.display = section.style.display === "none" ? "block" : "none";
