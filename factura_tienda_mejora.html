@@ -43,6 +43,17 @@
         <button onclick="guardarCliente()">Guardar cliente</button>
       </div>
     </div>
+    
+<button onclick="toggleTipoDocumento()">Mostrar/Ocultar tipo de documento</button>
+<div id="tipoDocumentoContainer" style="display:none; margin-top:10px;">
+  <label for="tipoDocumento">Tipo de documento:</label>
+  <select id="tipoDocumento">
+    <option value="albaran">Albarán</option>
+    <option value="presupuesto">Presupuesto</option>
+    <option value="factura" selected>Factura</option>
+  </select>
+</div>
+
   </div>
 
   <div id="contenidoFactura">
