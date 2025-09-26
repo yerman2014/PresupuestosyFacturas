@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -85,9 +84,9 @@
 
       if (usuario === credenciales.usuario && contrasena === credenciales.contrasena) {
         localStorage.setItem("usuario_logueado", "true");
-        sessionStorage.setItem("sesion_iniciada", "true");
+        sessionStorage.setItem("accesoDesdeIndex", "true"); // ← clave correcta
         errorMsg.textContent = "";
-        window.location.href = "factura_tienda_mejora.html";
+        window.location.href = "factura_tienda_mejora.html"; // ← ajusta si el nombre es distinto
       } else {
         errorMsg.textContent = "Usuario o contraseña incorrectos.";
       }
