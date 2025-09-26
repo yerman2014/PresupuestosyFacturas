@@ -68,6 +68,17 @@
   </style>
 </head>
 <body>
+  
+<script>
+    // Verifica si el usuario ha accedido desde index.html
+    const accesoPermitido = sessionStorage.getItem("accesoDesdeIndex");
+
+    if (!accesoPermitido || accesoPermitido !== "true") {
+      alert("Acceso no permitido. Redirigiendo a la página de inicio...");
+      window.location.href = "index.html";
+    }
+  </script>
+
   <div id="configuracion" class="panel">
     <button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
     <button onclick="toggleSection('clienteConfig')">Mostrar/Ocultar configuración de cliente</button>
