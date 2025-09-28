@@ -2,7 +2,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
+
+<script>
+  // Verificar si el usuario ha iniciado sesión
+  if (!localStorage.getItem("usuario_logueado")) {
+    alert("Debe iniciar sesión primero.");
+    window.location.href = "index.html";
+  }
+</script>
+
+  
   <title>Factura - Mi Tienda</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
@@ -68,6 +77,14 @@
   </style>
 </head>
 <body>
+<script>
+// Verifica si el usuario ha iniciado sesión correctamente
+if (!sessionStorage.getItem("usuarioLogueado")) {
+    alert("Acceso denegado. Por favor, inicia sesión.");
+    window.location.href = "index.html";
+}
+</script>
+
   
 <script>
     // Verifica si el usuario ha accedido desde index.html
@@ -148,7 +165,8 @@
     <div class="total" id="totalConIVA">Total con IVA: €0.00</div>
   </div>
 
-  <button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
+  <button onclick="guardarFacturaEnLocalStorage()">Guardar factura en localStorage</button>
+<button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
   <button onclick="logout()">Cerrar sesión</button>
 
   <script>
@@ -237,7 +255,7 @@
       const tabla = document.querySelector("#factura tbody");
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td><input type="text" placeholder="Producto"></td>
+        <td><input list="sugerenciasProductos" class="productoInput" placeholder="Producto" oninput="autocompletarProducto(this)"><datalist id="sugerenciasProductos"></datalist></td>
         <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
         <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
         <td class="subtotal">0.00</td>
@@ -317,6 +335,94 @@
       actualizarTipoDocumento();
     });
   </script>
+
+<script>
+// === PRODUCTOS CON LOCALSTORAGE Y AUTOCOMPLETADO ===
+function guardarProductoEnLocalStorage(id, nombre, precio) {
+    let productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
+    const existe = productos.some(p => p.nombre === nombre);
+    if (!existe) {
+        productos.push({ id, nombre, precio });
+        localStorage.setItem("productosUsados", JSON.stringify(productos));
+    }
+}
+
+function actualizarSugerencias() {
+    const productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
+    const datalist = document.getElementById("sugerenciasProductos");
+    if (datalist) {
+        datalist.innerHTML = "";
+        productos.forEach(producto => {
+            const option = document.createElement("option");
+            option.value = producto.nombre;
+            datalist.appendChild(option);
+        });
+    }
+}
+
+function crearFilaProducto(nombre = "", cantidad = 1, precio = 0, id = "") {
+    const tabla = document.querySelector("#factura tbody");
+    const fila = document.createElement("tr");
+    const subtotal = (cantidad * precio).toFixed(2);
+    fila.innerHTML = `
+        <td><input list="sugerenciasProductos" class="productoInput" value="${nombre}" oninput="autocompletarProducto(this)" placeholder="Producto"></td>
+        <td><input type="number" value="${cantidad}" min="1" onchange="calcularTotal()"></td>
+        <td><input type="number" value="${precio}" min="0" step="0.01" onchange="calcularTotal()"></td>
+        <td class="subtotal">${subtotal}</td>
+        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+    `;
+    tabla.appendChild(fila);
+    calcularTotal();
+}
+
+function autocompletarProducto(input) {
+    const nombre = input.value;
+    const fila = input.closest("tr");
+    const productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
+    const producto = productos.find(p => p.nombre === nombre);
+    if (producto) {
+        fila.children[2].children[0].value = producto.precio;
+        calcularTotal();
+    }
+}
+
+function guardarFacturaEnLocalStorage() {
+    const filas = document.querySelectorAll("#factura tbody tr");
+    const productos = [];
+    filas.forEach(fila => {
+        const nombre = fila.children[0].children[0].value;
+        const cantidad = parseFloat(fila.children[1].children[0].value);
+        const precio = parseFloat(fila.children[2].children[0].value);
+        const subtotal = parseFloat(fila.children[3].textContent);
+        productos.push({ nombre, cantidad, precio, subtotal });
+        guardarProductoEnLocalStorage(nombre, nombre, precio);
+    });
+
+    const numero = document.getElementById("numeroFactura").value;
+    const iva = parseFloat(document.getElementById("ivaPorcentaje").value);
+    const totalSinIVA = parseFloat(document.getElementById("total").textContent.replace("Total: €", ""));
+    const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", ""));
+    const fecha = new Date().toISOString();
+
+    const factura = {
+        numero,
+        fecha,
+        productos,
+        iva,
+        totalSinIVA,
+        totalConIVA
+    };
+
+    let facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+    facturas.push(factura);
+    localStorage.setItem("facturasGuardadas", JSON.stringify(facturas));
+    alert("Factura guardada en localStorage.");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    actualizarSugerencias();
+});
+</script>
+
 </body>
 </html>
-
