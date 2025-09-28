@@ -417,7 +417,7 @@ function guardarFacturaEnLocalStorage() {
     let facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
     facturas.push(factura);
     localStorage.setItem("facturasGuardadas", JSON.stringify(facturas));
-    alert("Factura guardada en localStorage.");
+    
 }
 
 document.addEventListener("DOMContentLoaded", function () {
