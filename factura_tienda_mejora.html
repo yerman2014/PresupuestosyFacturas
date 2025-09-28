@@ -4,14 +4,6 @@
 <head>
 
 
-<script>
-  // Verifica si el usuario ha iniciado sesión correctamente desde index.html
-  if (sessionStorage.getItem("accesoDesdeIndex") !== "true") {
-    alert("Acceso no autorizado. Por favor, inicia sesión.");
-    window.location.href = "index.html";
-  }
-</script>
-
   
   <title>Factura - Mi Tienda</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -78,11 +70,13 @@
   </style>
 </head>
 <body>
+  
 <script>
-// Verifica si el usuario ha iniciado sesión correctamente
-if (!sessionStorage.getItem("usuarioLogueado")) {
-    alert("Acceso denegado. Por favor, inicia sesión.");
-    window.location.href = "index.html";
+// Verifica si el usuario ha accedido desde index.html
+const accesoPermitido = sessionStorage.getItem("accesoDesdeIndex");
+if (!accesoPermitido || accesoPermitido !== "true") {
+  alert("Acceso no permitido. Redirigiendo a la página de inicio...");
+  window.location.href = "index.html";
 }
 </script>
 
