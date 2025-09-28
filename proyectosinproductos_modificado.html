@@ -1,45 +1,12 @@
 
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <title>Factura - Mi Tienda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
-function mostrarFacturaCompleta(index) {
-    const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
-    const factura = facturas[index];
-    if (!factura) return;
-
-    let html = `<p><strong>Número:</strong> ${factura.numero}</p>`;
-    html += `<p><strong>Fecha:</strong> ${factura.fecha}</p>`;
-    html += `<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top:10px;">
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                    <th>ID</th>
-                </tr>`;
-    factura.productos.forEach(p => {
-        html += `<tr>
-                    <td>${p.nombre}</td>
-                    <td>${p.cantidad}</td>
-                    <td>€${p.precio.toFixed(2)}</td>
-                    <td>€${p.subtotal.toFixed(2)}</td>
-                    <td>${p.id}</td>
-                </tr>`;
-    });
-    html += `</table>`;
-    html += `<p><strong>Total sin IVA:</strong> €${factura.totalSinIVA.toFixed(2)}</p>`;
-    html += `<p><strong>IVA:</strong> ${factura.iva}%</p>`;
-    html += `<p><strong>Total con IVA:</strong> €${factura.totalConIVA.toFixed(2)}</p>`;
-
-    document.getElementById("detalleFactura").innerHTML = html;
-    document.getElementById("modalFactura").style.display = "block";
-}
-
-</script>
-  <style>
+<meta charset="utf-8"/>
+<title>Factura - Mi Tienda</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 20px;
@@ -102,7 +69,6 @@ function mostrarFacturaCompleta(index) {
   </style>
 </head>
 <body>
-  
 <script>
     // Verifica si el usuario ha accedido desde index.html
     const accesoPermitido = sessionStorage.getItem("accesoDesdeIndex");
@@ -111,115 +77,72 @@ function mostrarFacturaCompleta(index) {
       alert("Acceso no permitido. Redirigiendo a la página de inicio...");
       window.location.href = "index.html";
     }
-  
-function mostrarFacturaCompleta(index) {
-    const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
-    const factura = facturas[index];
-    if (!factura) return;
-
-    let html = `<p><strong>Número:</strong> ${factura.numero}</p>`;
-    html += `<p><strong>Fecha:</strong> ${factura.fecha}</p>`;
-    html += `<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top:10px;">
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                    <th>ID</th>
-                </tr>`;
-    factura.productos.forEach(p => {
-        html += `<tr>
-                    <td>${p.nombre}</td>
-                    <td>${p.cantidad}</td>
-                    <td>€${p.precio.toFixed(2)}</td>
-                    <td>€${p.subtotal.toFixed(2)}</td>
-                    <td>${p.id}</td>
-                </tr>`;
-    });
-    html += `</table>`;
-    html += `<p><strong>Total sin IVA:</strong> €${factura.totalSinIVA.toFixed(2)}</p>`;
-    html += `<p><strong>IVA:</strong> ${factura.iva}%</p>`;
-    html += `<p><strong>Total con IVA:</strong> €${factura.totalConIVA.toFixed(2)}</p>`;
-
-    document.getElementById("detalleFactura").innerHTML = html;
-    document.getElementById("modalFactura").style.display = "block";
-}
-
-</script>
-
-  <div id="configuracion" class="panel">
-    <button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
-    <button onclick="toggleSection('clienteConfig')">Mostrar/Ocultar configuración de cliente</button>
-    <button onclick="toggleSection('tipoDocumentoContainer')">Mostrar/Ocultar tipo de documento</button>
-
-    <div id="tiendaConfig" style="display:none;">
-      <input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
-      <input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
-      <button onclick="guardarTienda()">Guardar datos de la tienda</button>
-    </div>
-
-    <div id="clienteConfig" style="display:none;">
-      <select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
-      <button onclick="mostrarFormularioCliente()">Añadir cliente</button>
-      <div id="formCliente" style="display:none;">
-        <input id="clienteNombre" placeholder="Nombre" type="text"/>
-        <input id="clienteDNI" placeholder="DNI" type="text"/>
-        <input id="clienteDireccion" placeholder="Dirección" type="text"/>
-        <input id="clienteTelefono" placeholder="Teléfono" type="text"/>
-        <input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
-        <button onclick="guardarCliente()">Guardar cliente</button>
-      </div>
-    </div>
-
-    <div id="tipoDocumentoContainer" style="display:none; margin-top:10px;">
-      <label for="tipoDocumento">Tipo de documento:</label>
-      <select id="tipoDocumento">
-        <option value="albaran">Albarán</option>
-        <option value="presupuesto">Presupuesto</option>
-        <option value="factura" selected>Factura</option>
-      </select>
-    </div>
-  </div>
-
-  <div id="contenidoFactura" class="panel">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
-      <div>
-        <h1 id="nombreTienda">Mi Tienda</h1>
-        <p id="tiendaDireccionTexto"></p>
-      </div>
-      <div style="text-align: right;">
-        <label id="tipoDocumentoLabel" for="numeroFactura"><strong>Nº Factura:</strong></label>
-        <input id="numeroFactura" type="text" style="width: 120px; font-size: 16px;" />
-      </div>
-    </div>
-
-    <div id="datosCliente" style="text-align: right; margin-bottom: 20px;"></div>
-
-    <table id="factura">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio Unitario (€)</th>
-          <th>Subtotal (€)</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <button onclick="agregarFila()">Agregar producto</button>
-    <div class="total" id="total">Total: €0.00</div>
-    <div style="margin-top: 20px;">
-      <label for="ivaPorcentaje"><strong>IVA (%):</strong></label>
-      <input id="ivaPorcentaje" type="number" value="21" min="0" step="0.01" onchange="calcularTotal()" style="width: 80px; padding: 5px; margin-left: 10px;" />
-    </div>
-    <div class="total" id="totalConIVA">Total con IVA: €0.00</div>
-  </div>
-
-  <button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
-  <button onclick="logout()">Cerrar sesión</button>
-
-  <script>
+  </script>
+<div class="panel" id="configuracion">
+<button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
+<button onclick="toggleSection('clienteConfig')">Mostrar/Ocultar configuración de cliente</button>
+<button onclick="toggleSection('tipoDocumentoContainer')">Mostrar/Ocultar tipo de documento</button>
+<div id="tiendaConfig" style="display:none;">
+<input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
+<input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
+<button onclick="guardarTienda()">Guardar datos de la tienda</button>
+</div>
+<div id="clienteConfig" style="display:none;">
+<select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
+<button onclick="mostrarFormularioCliente()">Añadir cliente</button>
+<div id="formCliente" style="display:none;">
+<input id="clienteNombre" placeholder="Nombre" type="text"/>
+<input id="clienteDNI" placeholder="DNI" type="text"/>
+<input id="clienteDireccion" placeholder="Dirección" type="text"/>
+<input id="clienteTelefono" placeholder="Teléfono" type="text"/>
+<input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
+<button onclick="guardarCliente()">Guardar cliente</button>
+</div>
+</div>
+<div id="tipoDocumentoContainer" style="display:none; margin-top:10px;">
+<label for="tipoDocumento">Tipo de documento:</label>
+<select id="tipoDocumento">
+<option value="albaran">Albarán</option>
+<option value="presupuesto">Presupuesto</option>
+<option selected="" value="factura">Factura</option>
+</select>
+</div>
+</div>
+<div class="panel" id="contenidoFactura">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+<div>
+<h1 id="nombreTienda">Mi Tienda</h1>
+<p id="tiendaDireccionTexto"></p>
+</div>
+<div style="text-align: right;">
+<label for="numeroFactura" id="tipoDocumentoLabel"><strong>Nº Factura:</strong></label>
+<input id="numeroFactura" style="width: 120px; font-size: 16px;" type="text"/>
+</div>
+</div>
+<div id="datosCliente" style="text-align: right; margin-bottom: 20px;"></div>
+<table id="factura">
+<thead>
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio Unitario (€)</th>
+<th>Subtotal (€)</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button onclick="agregarFila()">Agregar producto</button>
+<div class="total" id="total">Total: €0.00</div>
+<div style="margin-top: 20px;">
+<label for="ivaPorcentaje"><strong>IVA (%):</strong></label>
+<input id="ivaPorcentaje" min="0" onchange="calcularTotal()" step="0.01" style="width: 80px; padding: 5px; margin-left: 10px;" type="number" value="21"/>
+</div>
+<div class="total" id="totalConIVA">Total con IVA: €0.00</div>
+</div>
+<button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
+<button onclick="logout()">Cerrar sesión</button>
+<script>
     function toggleSection(id) {
       const sections = ['tiendaConfig', 'clienteConfig', 'tipoDocumentoContainer'];
       sections.forEach(sectionId => {
@@ -384,48 +307,46 @@ function mostrarFacturaCompleta(index) {
       tipoDocumentoSelect.addEventListener("change", actualizarTipoDocumento);
       actualizarTipoDocumento();
     });
-  
-function mostrarFacturaCompleta(index) {
-    const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
-    const factura = facturas[index];
-    if (!factura) return;
+  </script>
 
-    let html = `<p><strong>Número:</strong> ${factura.numero}</p>`;
-    html += `<p><strong>Fecha:</strong> ${factura.fecha}</p>`;
-    html += `<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top:10px;">
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                    <th>ID</th>
-                </tr>`;
-    factura.productos.forEach(p => {
-        html += `<tr>
-                    <td>${p.nombre}</td>
-                    <td>${p.cantidad}</td>
-                    <td>€${p.precio.toFixed(2)}</td>
-                    <td>€${p.subtotal.toFixed(2)}</td>
-                    <td>${p.id}</td>
-                </tr>`;
-    });
-    html += `</table>`;
-    html += `<p><strong>Total sin IVA:</strong> €${factura.totalSinIVA.toFixed(2)}</p>`;
-    html += `<p><strong>IVA:</strong> ${factura.iva}%</p>`;
-    html += `<p><strong>Total con IVA:</strong> €${factura.totalConIVA.toFixed(2)}</p>`;
-
-    document.getElementById("detalleFactura").innerHTML = html;
-    document.getElementById("modalFactura").style.display = "block";
+<div class="panel" id="historialFacturas">
+<h3>Historial de Facturas Guardadas</h3>
+<table id="tablaHistorial" style="margin-top:10px;">
+<thead>
+<tr>
+<th>Nº Factura</th>
+<th>Fecha</th>
+<th>Total con IVA (€)</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+<script>
+function mostrarHistorialFacturas() {
+  const tabla = document.querySelector("#tablaHistorial tbody");
+  tabla.innerHTML = "";
+  const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+  facturas.forEach((factura, index) => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${factura.numero}</td>
+      <td>${factura.fecha}</td>
+      <td>€${factura.totalConIVA.toFixed(2)}</td>
+      <td><button onclick="verFactura(${index})">Ver</button></td>
+    `;
+    tabla.appendChild(fila);
+  });
 }
 
+function verFactura(index) {
+  const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+  const factura = facturas[index];
+  alert("Factura Nº " + factura.numero + "\nFecha: " + factura.fecha + "\nTotal con IVA: €" + factura.totalConIVA.toFixed(2));
+}
+
+document.addEventListener("DOMContentLoaded", mostrarHistorialFacturas);
 </script>
-
-<!-- Modal for viewing invoice details -->
-<div id="modalFactura" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:white; border:1px solid #ccc; padding:20px; overflow:auto; z-index:1000;">
-  <h2>Detalles de la factura</h2>
-  <div id="detalleFactura"></div>
-  <button onclick="document.getElementById('modalFactura').style.display='none'">Cerrar</button>
-</div>
-
 </body>
 </html>
