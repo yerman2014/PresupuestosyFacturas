@@ -1,14 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
+<style>
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+</style>
+
 
 
   
   <title>Factura - Mi Tienda</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 20px;
@@ -62,12 +70,6 @@
     #configuracion {
       margin-bottom: 20px;
     }
-    @media print {
-  .no-print {
-    display: none !important;
-  }
-}
-
     #contenidoFactura {
       background-color: #fff;
       padding: 20px;
@@ -152,9 +154,7 @@
       </thead>
       <tbody></tbody>
     </table>
- 
-<button onclick="agregarFila()" style="color: green; font-weight: bold;" class="no-print">➕</button>
-
+    <button onclick="agregarFila()" class="no-print" style="color: green; font-weight: bold;">➕ Agregar producto</button>Agregar producto</button>
     <div class="total" id="total">Total: €0.00</div>
     <div style="margin-top: 20px;">
       <label for="ivaPorcentaje"><strong>IVA (%):</strong></label>
@@ -163,9 +163,9 @@
     <div class="total" id="totalConIVA">Total con IVA: €0.00</div>
   </div>
 
-  <button onclick="guardarFacturaEnLocalStorage()">Guardar factura en localStorage</button>
-<button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
-  <button onclick="logout()">Cerrar sesión</button>
+  <button onclick="guardarFacturaEnLocalStorage()" class="no-print">Guardar factura en localStorage</button>Guardar factura en localStorage</button>
+<button class="btn no-print" onclick="guardarPDF()">Guardar como PDF</button>Guardar como PDF</button>
+  <button onclick="logout()" class="no-print">Cerrar sesión</button>Cerrar sesión</button>
 
   <script>
     function toggleSection(id) {
@@ -249,26 +249,19 @@
       }
     }
 
-   function agregarFila() {
-  const tabla = document.querySelector("#factura tbody");
-  const fila = document.createElement("tr");
-  fila.innerHTML = `
-    <td>
-      <input list="sugerenciasProductos" class="productoInput" placeholder="Producto" oninput="autocompletarProducto(this)">
-      <datalist id="sugerenciasProductos"></datalist>
-    </td>
-    <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
-    <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
-    <td class="subtotal">0.00</td>
-    <td>
-      <button onclick="eliminarFila(this)" class="no-print" style="color: red; font-weight: bold;">✖</button>
-    </td>
-  `;
-  tabla.appendChild(fila);
-  guardarFacturaEnLocalStorage();
-  calcularTotal();
-}
-
+    function agregarFila() {
+      const tabla = document.querySelector("#factura tbody");
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td><input list="sugerenciasProductos" class="productoInput" placeholder="Producto" oninput="autocompletarProducto(this)"><datalist id="sugerenciasProductos"></datalist></td>
+        <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
+        <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
+        <td class="subtotal">0.00</td>
+        <td><button onclick="eliminarFila(this)" class="no-print" style="color: red; font-weight: bold;">✖</button></td>
+      `;
+      tabla.appendChild(fila);
+      guardarFacturaEnLocalStorage();calcularTotal();
+    }
 
     function eliminarFila(btn) {
       btn.closest("tr").remove();
@@ -391,7 +384,7 @@ function crearFilaProducto(nombre = "", cantidad = 1, precio = 0, id = "") {
         <td><input type="number" value="${cantidad}" min="1" onchange="calcularTotal()"></td>
         <td><input type="number" value="${precio}" min="0" step="0.01" onchange="calcularTotal()"></td>
         <td class="subtotal">${subtotal}</td>
-        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+        <td><button onclick="eliminarFila(this)" class="no-print" style="color: red; font-weight: bold;">✖</button></td>
     `;
     tabla.appendChild(fila);
     calcularTotal();
@@ -446,5 +439,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<button onclick="window.print()" class="no-print">🖨️ Imprimir PDF</button>
 </body>
 </html>
