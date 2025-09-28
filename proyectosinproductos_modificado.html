@@ -4,7 +4,41 @@
 <head>
   <meta charset="utf-8"/>
   <title>Factura - Mi Tienda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+function mostrarFacturaCompleta(index) {
+    const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+    const factura = facturas[index];
+    if (!factura) return;
+
+    let html = `<p><strong>Número:</strong> ${factura.numero}</p>`;
+    html += `<p><strong>Fecha:</strong> ${factura.fecha}</p>`;
+    html += `<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top:10px;">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th>ID</th>
+                </tr>`;
+    factura.productos.forEach(p => {
+        html += `<tr>
+                    <td>${p.nombre}</td>
+                    <td>${p.cantidad}</td>
+                    <td>€${p.precio.toFixed(2)}</td>
+                    <td>€${p.subtotal.toFixed(2)}</td>
+                    <td>${p.id}</td>
+                </tr>`;
+    });
+    html += `</table>`;
+    html += `<p><strong>Total sin IVA:</strong> €${factura.totalSinIVA.toFixed(2)}</p>`;
+    html += `<p><strong>IVA:</strong> ${factura.iva}%</p>`;
+    html += `<p><strong>Total con IVA:</strong> €${factura.totalConIVA.toFixed(2)}</p>`;
+
+    document.getElementById("detalleFactura").innerHTML = html;
+    document.getElementById("modalFactura").style.display = "block";
+}
+
+</script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -77,7 +111,41 @@
       alert("Acceso no permitido. Redirigiendo a la página de inicio...");
       window.location.href = "index.html";
     }
-  </script>
+  
+function mostrarFacturaCompleta(index) {
+    const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+    const factura = facturas[index];
+    if (!factura) return;
+
+    let html = `<p><strong>Número:</strong> ${factura.numero}</p>`;
+    html += `<p><strong>Fecha:</strong> ${factura.fecha}</p>`;
+    html += `<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top:10px;">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th>ID</th>
+                </tr>`;
+    factura.productos.forEach(p => {
+        html += `<tr>
+                    <td>${p.nombre}</td>
+                    <td>${p.cantidad}</td>
+                    <td>€${p.precio.toFixed(2)}</td>
+                    <td>€${p.subtotal.toFixed(2)}</td>
+                    <td>${p.id}</td>
+                </tr>`;
+    });
+    html += `</table>`;
+    html += `<p><strong>Total sin IVA:</strong> €${factura.totalSinIVA.toFixed(2)}</p>`;
+    html += `<p><strong>IVA:</strong> ${factura.iva}%</p>`;
+    html += `<p><strong>Total con IVA:</strong> €${factura.totalConIVA.toFixed(2)}</p>`;
+
+    document.getElementById("detalleFactura").innerHTML = html;
+    document.getElementById("modalFactura").style.display = "block";
+}
+
+</script>
 
   <div id="configuracion" class="panel">
     <button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
@@ -148,8 +216,7 @@
     <div class="total" id="totalConIVA">Total con IVA: €0.00</div>
   </div>
 
-  <button onclick="guardarFacturaEnLocalStorage()">Guardar factura en localStorage</button>
-<button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
+  <button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
   <button onclick="logout()">Cerrar sesión</button>
 
   <script>
@@ -238,7 +305,7 @@
       const tabla = document.querySelector("#factura tbody");
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td><input list="sugerenciasProductos" class="productoInput" placeholder="Producto" oninput="autocompletarProducto(this)"><datalist id="sugerenciasProductos"></datalist></td>
+        <td><input type="text" placeholder="Producto"></td>
         <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
         <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
         <td class="subtotal">0.00</td>
@@ -317,95 +384,48 @@
       tipoDocumentoSelect.addEventListener("change", actualizarTipoDocumento);
       actualizarTipoDocumento();
     });
-  </script>
+  
+function mostrarFacturaCompleta(index) {
+    const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+    const factura = facturas[index];
+    if (!factura) return;
 
-<script>
-// === PRODUCTOS CON LOCALSTORAGE Y AUTOCOMPLETADO ===
-function guardarProductoEnLocalStorage(id, nombre, precio) {
-    let productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
-    const existe = productos.some(p => p.nombre === nombre);
-    if (!existe) {
-        productos.push({ id, nombre, precio });
-        localStorage.setItem("productosUsados", JSON.stringify(productos));
-    }
-}
-
-function actualizarSugerencias() {
-    const productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
-    const datalist = document.getElementById("sugerenciasProductos");
-    if (datalist) {
-        datalist.innerHTML = "";
-        productos.forEach(producto => {
-            const option = document.createElement("option");
-            option.value = producto.nombre;
-            datalist.appendChild(option);
-        });
-    }
-}
-
-function crearFilaProducto(nombre = "", cantidad = 1, precio = 0, id = "") {
-    const tabla = document.querySelector("#factura tbody");
-    const fila = document.createElement("tr");
-    const subtotal = (cantidad * precio).toFixed(2);
-    fila.innerHTML = `
-        <td><input list="sugerenciasProductos" class="productoInput" value="${nombre}" oninput="autocompletarProducto(this)" placeholder="Producto"></td>
-        <td><input type="number" value="${cantidad}" min="1" onchange="calcularTotal()"></td>
-        <td><input type="number" value="${precio}" min="0" step="0.01" onchange="calcularTotal()"></td>
-        <td class="subtotal">${subtotal}</td>
-        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
-    `;
-    tabla.appendChild(fila);
-    calcularTotal();
-}
-
-function autocompletarProducto(input) {
-    const nombre = input.value;
-    const fila = input.closest("tr");
-    const productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
-    const producto = productos.find(p => p.nombre === nombre);
-    if (producto) {
-        fila.children[2].children[0].value = producto.precio;
-        calcularTotal();
-    }
-}
-
-function guardarFacturaEnLocalStorage() {
-    const filas = document.querySelectorAll("#factura tbody tr");
-    const productos = [];
-    filas.forEach(fila => {
-        const nombre = fila.children[0].children[0].value;
-        const cantidad = parseFloat(fila.children[1].children[0].value);
-        const precio = parseFloat(fila.children[2].children[0].value);
-        const subtotal = parseFloat(fila.children[3].textContent);
-        productos.push({ nombre, cantidad, precio, subtotal });
-        guardarProductoEnLocalStorage(nombre, nombre, precio);
+    let html = `<p><strong>Número:</strong> ${factura.numero}</p>`;
+    html += `<p><strong>Fecha:</strong> ${factura.fecha}</p>`;
+    html += `<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top:10px;">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th>ID</th>
+                </tr>`;
+    factura.productos.forEach(p => {
+        html += `<tr>
+                    <td>${p.nombre}</td>
+                    <td>${p.cantidad}</td>
+                    <td>€${p.precio.toFixed(2)}</td>
+                    <td>€${p.subtotal.toFixed(2)}</td>
+                    <td>${p.id}</td>
+                </tr>`;
     });
+    html += `</table>`;
+    html += `<p><strong>Total sin IVA:</strong> €${factura.totalSinIVA.toFixed(2)}</p>`;
+    html += `<p><strong>IVA:</strong> ${factura.iva}%</p>`;
+    html += `<p><strong>Total con IVA:</strong> €${factura.totalConIVA.toFixed(2)}</p>`;
 
-    const numero = document.getElementById("numeroFactura").value;
-    const iva = parseFloat(document.getElementById("ivaPorcentaje").value);
-    const totalSinIVA = parseFloat(document.getElementById("total").textContent.replace("Total: €", ""));
-    const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", ""));
-    const fecha = new Date().toISOString();
-
-    const factura = {
-        numero,
-        fecha,
-        productos,
-        iva,
-        totalSinIVA,
-        totalConIVA
-    };
-
-    let facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
-    facturas.push(factura);
-    localStorage.setItem("facturasGuardadas", JSON.stringify(facturas));
-    alert("Factura guardada en localStorage.");
+    document.getElementById("detalleFactura").innerHTML = html;
+    document.getElementById("modalFactura").style.display = "block";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    actualizarSugerencias();
-});
 </script>
+
+<!-- Modal for viewing invoice details -->
+<div id="modalFactura" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:white; border:1px solid #ccc; padding:20px; overflow:auto; z-index:1000;">
+  <h2>Detalles de la factura</h2>
+  <div id="detalleFactura"></div>
+  <button onclick="document.getElementById('modalFactura').style.display='none'">Cerrar</button>
+</div>
 
 </body>
 </html>
