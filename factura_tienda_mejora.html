@@ -6,27 +6,7 @@
 
   
   <title>Factura - Mi Tienda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
-function autoGuardarFacturaSiValida() {
-  const filas = document.querySelectorAll("#factura tbody tr");
-  let esValida = false;
-
-  filas.forEach(fila => {
-    const nombre = fila.children[0].children[0].value.trim();
-    const cantidad = parseFloat(fila.children[1].children[0].value);
-    const precio = parseFloat(fila.children[2].children[0].value);
-
-    if (nombre !== "" && cantidad > 0 && precio >= 0) {
-      esValida = true;
-    }
-  });
-
-  if (esValida) {
-    guardarFacturaEnLocalStorage();
-  }
-}
-
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -271,7 +251,7 @@ function autoGuardarFacturaSiValida() {
         <td><button onclick="eliminarFila(this)">Eliminar</button></td>
       `;
       tabla.appendChild(fila);
-      calcularTotal();
+      guardarFacturaEnLocalStorage();calcularTotal();
     }
 
     function eliminarFila(btn) {
@@ -292,6 +272,18 @@ function autoGuardarFacturaSiValida() {
       const ivaPorcentaje = parseFloat(document.getElementById("ivaPorcentaje").value) || 0;
       const totalConIVA = total + (total * ivaPorcentaje / 100);
       document.getElementById("totalConIVA").textContent = `Total con IVA: €${totalConIVA.toFixed(2)}`;
+    // Guardar automáticamente si hay productos nuevos con nombre y precio válidos
+    let guardar = false;
+    document.querySelectorAll("#factura tbody tr").forEach(fila => {
+        const nombre = fila.children[0].children[0].value.trim();
+        const precio = parseFloat(fila.children[2].children[0].value);
+        if (nombre && !isNaN(precio) && precio > 0) {
+            guardar = true;
+        }
+    });
+    if (guardar) {
+        guardarFacturaEnLocalStorage();
+    }
     }
 
     function guardarPDF() {
@@ -313,24 +305,6 @@ function autoGuardarFacturaSiValida() {
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll("#factura tbody tr").forEach(fila => {
-    const productoInput = fila.children[0].children[0];
-    const precioInput = fila.children[2].children[0];
-
-    productoInput.addEventListener("blur", autoGuardarFacturaSiValida);
-    productoInput.addEventListener("keydown", function(e) {
-      if (e.key === "Enter") autoGuardarFacturaSiValida();
-    });
-
-    precioInput.addEventListener("blur", autoGuardarFacturaSiValida);
-    precioInput.addEventListener("keydown", function(e) {
-      if (e.key === "Enter") autoGuardarFacturaSiValida();
-    });
-  });
-});
-
       cargarTienda();
       cargarClientes();
       const numero = localStorage.getItem("numeroFactura") || "0001";
@@ -443,28 +417,10 @@ function guardarFacturaEnLocalStorage() {
     let facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
     facturas.push(factura);
     localStorage.setItem("facturasGuardadas", JSON.stringify(facturas));
-    console.log("Factura guardada en localStorage.");
+    alert("Factura guardada en localStorage.");
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll("#factura tbody tr").forEach(fila => {
-    const productoInput = fila.children[0].children[0];
-    const precioInput = fila.children[2].children[0];
-
-    productoInput.addEventListener("blur", autoGuardarFacturaSiValida);
-    productoInput.addEventListener("keydown", function(e) {
-      if (e.key === "Enter") autoGuardarFacturaSiValida();
-    });
-
-    precioInput.addEventListener("blur", autoGuardarFacturaSiValida);
-    precioInput.addEventListener("keydown", function(e) {
-      if (e.key === "Enter") autoGuardarFacturaSiValida();
-    });
-  });
-});
-
     actualizarSugerencias();
 });
 </script>
