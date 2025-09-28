@@ -247,7 +247,7 @@
         <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
         <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
         <td class="subtotal">0.00</td>
-        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+         <button onclick="eliminarFila(this)" style="color: red; font-weight: bold;">✖</button>
       `;
       tabla.appendChild(fila);
       guardarFacturaEnLocalStorage();calcularTotal();
