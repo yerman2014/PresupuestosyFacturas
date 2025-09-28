@@ -411,6 +411,21 @@ function guardarFacturaEnLocalStorage() {
 document.addEventListener("DOMContentLoaded", function () {
     actualizarSugerencias();
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelector("#factura").addEventListener("focusout", function (e) {
+    if (e.target && (e.target.placeholder === "Producto" || e.target.type === "number")) {
+      guardarFacturaEnLocalStorage();
+    }
+  });
+
+  document.querySelector("#factura").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && (e.target.placeholder === "Producto" || e.target.type === "number")) {
+      guardarFacturaEnLocalStorage();
+    }
+  });
+});
+
 </script>
 
 </body>
