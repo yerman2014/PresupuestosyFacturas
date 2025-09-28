@@ -1,13 +1,11 @@
 
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-
-
-  
-  <title>Factura - Mi Tienda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
+<title>Factura - Mi Tienda</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 20px;
@@ -83,82 +81,72 @@
     window.location.href = "index.html";
   }
 </script>
-
-
-  <div id="configuracion" class="panel">
-    <button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
-    <button onclick="toggleSection('clienteConfig')">Mostrar/Ocultar configuración de cliente</button>
-    <button onclick="toggleSection('tipoDocumentoContainer')">Mostrar/Ocultar tipo de documento</button>
-
-    <div id="tiendaConfig" style="display:none;">
-      <input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
-      <input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
-      <button onclick="guardarTienda()">Guardar datos de la tienda</button>
-    </div>
-
-    <div id="clienteConfig" style="display:none;">
-      <select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
-      <button onclick="mostrarFormularioCliente()">Añadir cliente</button>
-      <div id="formCliente" style="display:none;">
-        <input id="clienteNombre" placeholder="Nombre" type="text"/>
-        <input id="clienteDNI" placeholder="DNI" type="text"/>
-        <input id="clienteDireccion" placeholder="Dirección" type="text"/>
-        <input id="clienteTelefono" placeholder="Teléfono" type="text"/>
-        <input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
-        <button onclick="guardarCliente()">Guardar cliente</button>
-      </div>
-    </div>
-
-    <div id="tipoDocumentoContainer" style="display:none; margin-top:10px;">
-      <label for="tipoDocumento">Tipo de documento:</label>
-      <select id="tipoDocumento">
-        <option value="albaran">Albarán</option>
-        <option value="presupuesto">Presupuesto</option>
-        <option value="factura" selected>Factura</option>
-      </select>
-    </div>
-  </div>
-
-  <div id="contenidoFactura" class="panel">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
-      <div>
-        <h1 id="nombreTienda">Mi Tienda</h1>
-        <p id="tiendaDireccionTexto"></p>
-      </div>
-      <div style="text-align: right;">
-        <label id="tipoDocumentoLabel" for="numeroFactura"><strong>Nº Factura:</strong></label>
-        <input id="numeroFactura" type="text" style="width: 120px; font-size: 16px;" />
-      </div>
-    </div>
-
-    <div id="datosCliente" style="text-align: right; margin-bottom: 20px;"></div>
-
-    <table id="factura">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio Unitario (€)</th>
-          <th>Subtotal (€)</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <button onclick="agregarFila()">Agregar producto</button>
-    <div class="total" id="total">Total: €0.00</div>
-    <div style="margin-top: 20px;">
-      <label for="ivaPorcentaje"><strong>IVA (%):</strong></label>
-      <input id="ivaPorcentaje" type="number" value="21" min="0" step="0.01" onchange="calcularTotal()" style="width: 80px; padding: 5px; margin-left: 10px;" />
-    </div>
-    <div class="total" id="totalConIVA">Total con IVA: €0.00</div>
-  </div>
-
-  <button onclick="guardarFacturaEnLocalStorage()">Guardar factura en localStorage</button>
+<div class="panel" id="configuracion">
+<button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
+<button onclick="toggleSection('clienteConfig')">Mostrar/Ocultar configuración de cliente</button>
+<button onclick="toggleSection('tipoDocumentoContainer')">Mostrar/Ocultar tipo de documento</button>
+<div id="tiendaConfig" style="display:none;">
+<input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
+<input id="tiendaDireccion" placeholder="Dirección de la tienda" type="text"/>
+<button onclick="guardarTienda()">Guardar datos de la tienda</button>
+</div>
+<div id="clienteConfig" style="display:none;">
+<select id="clienteSelect" onchange="mostrarClienteSeleccionado()"></select>
+<button onclick="mostrarFormularioCliente()">Añadir cliente</button>
+<div id="formCliente" style="display:none;">
+<input id="clienteNombre" placeholder="Nombre" type="text"/>
+<input id="clienteDNI" placeholder="DNI" type="text"/>
+<input id="clienteDireccion" placeholder="Dirección" type="text"/>
+<input id="clienteTelefono" placeholder="Teléfono" type="text"/>
+<input id="clienteEmail" placeholder="Correo electrónico" type="email"/>
+<button onclick="guardarCliente()">Guardar cliente</button>
+</div>
+</div>
+<div id="tipoDocumentoContainer" style="display:none; margin-top:10px;">
+<label for="tipoDocumento">Tipo de documento:</label>
+<select id="tipoDocumento">
+<option value="albaran">Albarán</option>
+<option value="presupuesto">Presupuesto</option>
+<option selected="" value="factura">Factura</option>
+</select>
+</div>
+</div>
+<div class="panel" id="contenidoFactura">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+<div>
+<h1 id="nombreTienda">Mi Tienda</h1>
+<p id="tiendaDireccionTexto"></p>
+</div>
+<div style="text-align: right;">
+<label for="numeroFactura" id="tipoDocumentoLabel"><strong>Nº Factura:</strong></label>
+<input id="numeroFactura" style="width: 120px; font-size: 16px;" type="text"/>
+</div>
+</div>
+<div id="datosCliente" style="text-align: right; margin-bottom: 20px;"></div>
+<table id="factura">
+<thead>
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio Unitario (€)</th>
+<th>Subtotal (€)</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button onclick="agregarFila()">Agregar producto</button>
+<div class="total" id="total">Total: €0.00</div>
+<div style="margin-top: 20px;">
+<label for="ivaPorcentaje"><strong>IVA (%):</strong></label>
+<input id="ivaPorcentaje" min="0" onchange="calcularTotal()" step="0.01" style="width: 80px; padding: 5px; margin-left: 10px;" type="number" value="21"/>
+</div>
+<div class="total" id="totalConIVA">Total con IVA: €0.00</div>
+</div>
+<button onclick="guardarFacturaEnLocalStorage()">Guardar factura en localStorage</button>
 <button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
-  <button onclick="logout()">Cerrar sesión</button>
-
-  <script>
+<button onclick="logout()">Cerrar sesión</button>
+<script>
     function toggleSection(id) {
       const sections = ['tiendaConfig', 'clienteConfig', 'tipoDocumentoContainer'];
       sections.forEach(sectionId => {
@@ -251,7 +239,7 @@
         <td><button onclick="eliminarFila(this)">Eliminar</button></td>
       `;
       tabla.appendChild(fila);
-      guardarFacturaEnLocalStorage();calcularTotal();
+      calcularTotal();
     }
 
     function eliminarFila(btn) {
@@ -272,18 +260,6 @@
       const ivaPorcentaje = parseFloat(document.getElementById("ivaPorcentaje").value) || 0;
       const totalConIVA = total + (total * ivaPorcentaje / 100);
       document.getElementById("totalConIVA").textContent = `Total con IVA: €${totalConIVA.toFixed(2)}`;
-    // Guardar automáticamente si hay productos nuevos con nombre y precio válidos
-    let guardar = false;
-    document.querySelectorAll("#factura tbody tr").forEach(fila => {
-        const nombre = fila.children[0].children[0].value.trim();
-        const precio = parseFloat(fila.children[2].children[0].value);
-        if (nombre && !isNaN(precio) && precio > 0) {
-            guardar = true;
-        }
-    });
-    if (guardar) {
-        guardarFacturaEnLocalStorage();
-    }
     }
 
     function guardarPDF() {
@@ -336,7 +312,6 @@
       actualizarTipoDocumento();
     });
   </script>
-
 <script>
 // === PRODUCTOS CON LOCALSTORAGE Y AUTOCOMPLETADO ===
 function guardarProductoEnLocalStorage(id, nombre, precio) {
@@ -424,6 +399,53 @@ document.addEventListener("DOMContentLoaded", function () {
     actualizarSugerencias();
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+  if (facturas.length > 0) {
+    const factura = facturas[facturas.length - 1];
+    document.getElementById("numeroFactura").value = factura.numero || "";
+    document.getElementById("ivaPorcentaje").value = factura.iva || 21;
 
-</body>
+    const tbody = document.querySelector("#factura tbody");
+    tbody.innerHTML = "";
+    factura.productos.forEach(p => {
+      const fila = document.createElement("tr");
+      const subtotal = (p.cantidad * p.precio).toFixed(2);
+      fila.innerHTML = `
+        <td><input list="sugerenciasProductos" class="productoInput" value="${p.nombre}" oninput="autocompletarProducto(this)" placeholder="Producto"></td>
+        <td><input type="number" value="${p.cantidad}" min="1" onchange="calcularTotal()"></td>
+        <td><input type="number" value="${p.precio}" min="0" step="0.01" onchange="calcularTotal()"></td>
+        <td class="subtotal">${subtotal}</td>
+        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
+      `;
+      tbody.appendChild(fila);
+    });
+
+    document.getElementById("total").textContent = `Total: €${factura.totalSinIVA.toFixed(2)}`;
+    document.getElementById("totalConIVA").textContent = `Total con IVA: €${factura.totalConIVA.toFixed(2)}`;
+  }
+});
+</script><script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("factura").addEventListener("change", function (e) {
+    if (e.target && (e.target.type === "number" || e.target.classList.contains("productoInput"))) {
+      guardarFacturaEnLocalStorage();
+    }
+  });
+
+  document.getElementById("factura").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      guardarFacturaEnLocalStorage();
+    }
+  });
+
+  const agregarBtn = document.querySelector("button[onclick='agregarFila()']");
+  if (agregarBtn) {
+    agregarBtn.addEventListener("click", function () {
+      setTimeout(() => guardarFacturaEnLocalStorage(), 100);
+    });
+  }
+});
+</script></body>
 </html>
