@@ -68,11 +68,13 @@
   </style>
 </head>
 <body>
+
 <script>
-// Verifica si el usuario ha iniciado sesión correctamente
-if (!sessionStorage.getItem("usuarioLogueado")) {
-    alert("Acceso denegado. Por favor, inicia sesión.");
-    window.location.href = "index.html";
+// Verifica si el usuario ha accedido desde index.html
+const accesoPermitido = sessionStorage.getItem("accesoDesdeIndex");
+if (!accesoPermitido || accesoPermitido !== "true") {
+  alert("Acceso no permitido. Redirigiendo a la página de inicio...");
+  window.location.href = "index.html";
 }
 </script>
 
