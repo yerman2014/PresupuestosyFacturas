@@ -7,6 +7,8 @@
   <title>Factura - Mi Tienda</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
+    
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 20px;
@@ -60,6 +62,12 @@
     #configuracion {
       margin-bottom: 20px;
     }
+    @media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
     #contenidoFactura {
       background-color: #fff;
       padding: 20px;
