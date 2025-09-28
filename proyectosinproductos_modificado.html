@@ -1,10 +1,39 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8"/>
   <title>Factura - Mi Tienda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+function guardarFacturaEnLocalStorage() {
+    const productos = [];
+    document.querySelectorAll("#factura tbody tr").forEach(fila => {
+        const nombre = fila.children[0].querySelector("input")?.value || "";
+        const cantidad = parseFloat(fila.children[1].querySelector("input")?.value) || 0;
+        const precio = parseFloat(fila.children[2].querySelector("input")?.value) || 0;
+        const subtotal = parseFloat(fila.children[3].textContent) || 0;
+        const id = fila.getAttribute("data-id") || "";
+        productos.push({ id, nombre, cantidad, precio, subtotal });
+    });
+
+    const total = parseFloat(document.getElementById("total").textContent.replace("Total: €", "")) || 0;
+    const iva = parseFloat(document.getElementById("ivaPorcentaje").value) || 0;
+    const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", "")) || 0;
+    const numeroFactura = document.getElementById("numeroFactura").value || "";
+
+    const factura = {
+        numero: numeroFactura,
+        productos,
+        total,
+        iva,
+        totalConIVA,
+        fecha: new Date().toISOString()
+    };
+
+    localStorage.setItem("facturaGuardada", JSON.stringify(factura));
+    alert("Factura guardada en localStorage.");
+}
+
+</script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -77,7 +106,37 @@
       alert("Acceso no permitido. Redirigiendo a la página de inicio...");
       window.location.href = "index.html";
     }
-  </script>
+  
+function guardarFacturaEnLocalStorage() {
+    const productos = [];
+    document.querySelectorAll("#factura tbody tr").forEach(fila => {
+        const nombre = fila.children[0].querySelector("input")?.value || "";
+        const cantidad = parseFloat(fila.children[1].querySelector("input")?.value) || 0;
+        const precio = parseFloat(fila.children[2].querySelector("input")?.value) || 0;
+        const subtotal = parseFloat(fila.children[3].textContent) || 0;
+        const id = fila.getAttribute("data-id") || "";
+        productos.push({ id, nombre, cantidad, precio, subtotal });
+    });
+
+    const total = parseFloat(document.getElementById("total").textContent.replace("Total: €", "")) || 0;
+    const iva = parseFloat(document.getElementById("ivaPorcentaje").value) || 0;
+    const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", "")) || 0;
+    const numeroFactura = document.getElementById("numeroFactura").value || "";
+
+    const factura = {
+        numero: numeroFactura,
+        productos,
+        total,
+        iva,
+        totalConIVA,
+        fecha: new Date().toISOString()
+    };
+
+    localStorage.setItem("facturaGuardada", JSON.stringify(factura));
+    alert("Factura guardada en localStorage.");
+}
+
+</script>
 
   <div id="configuracion" class="panel">
     <button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
@@ -238,7 +297,7 @@
       const tabla = document.querySelector("#factura tbody");
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td><input list="sugerenciasProductos" class="productoInput" placeholder="Producto" oninput="autocompletarProducto(this)"><datalist id="sugerenciasProductos"></datalist></td>
+        <td><input type="text" placeholder="Producto"></td>
         <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
         <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
         <td class="subtotal">0.00</td>
@@ -317,95 +376,36 @@
       tipoDocumentoSelect.addEventListener("change", actualizarTipoDocumento);
       actualizarTipoDocumento();
     });
-  </script>
-
-<script>
-// === PRODUCTOS CON LOCALSTORAGE Y AUTOCOMPLETADO ===
-function guardarProductoEnLocalStorage(id, nombre, precio) {
-    let productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
-    const existe = productos.some(p => p.nombre === nombre);
-    if (!existe) {
-        productos.push({ id, nombre, precio });
-        localStorage.setItem("productosUsados", JSON.stringify(productos));
-    }
-}
-
-function actualizarSugerencias() {
-    const productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
-    const datalist = document.getElementById("sugerenciasProductos");
-    if (datalist) {
-        datalist.innerHTML = "";
-        productos.forEach(producto => {
-            const option = document.createElement("option");
-            option.value = producto.nombre;
-            datalist.appendChild(option);
-        });
-    }
-}
-
-function crearFilaProducto(nombre = "", cantidad = 1, precio = 0, id = "") {
-    const tabla = document.querySelector("#factura tbody");
-    const fila = document.createElement("tr");
-    const subtotal = (cantidad * precio).toFixed(2);
-    fila.innerHTML = `
-        <td><input list="sugerenciasProductos" class="productoInput" value="${nombre}" oninput="autocompletarProducto(this)" placeholder="Producto"></td>
-        <td><input type="number" value="${cantidad}" min="1" onchange="calcularTotal()"></td>
-        <td><input type="number" value="${precio}" min="0" step="0.01" onchange="calcularTotal()"></td>
-        <td class="subtotal">${subtotal}</td>
-        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
-    `;
-    tabla.appendChild(fila);
-    calcularTotal();
-}
-
-function autocompletarProducto(input) {
-    const nombre = input.value;
-    const fila = input.closest("tr");
-    const productos = JSON.parse(localStorage.getItem("productosUsados")) || [];
-    const producto = productos.find(p => p.nombre === nombre);
-    if (producto) {
-        fila.children[2].children[0].value = producto.precio;
-        calcularTotal();
-    }
-}
-
+  
 function guardarFacturaEnLocalStorage() {
-    const filas = document.querySelectorAll("#factura tbody tr");
     const productos = [];
-    filas.forEach(fila => {
-        const nombre = fila.children[0].children[0].value;
-        const cantidad = parseFloat(fila.children[1].children[0].value);
-        const precio = parseFloat(fila.children[2].children[0].value);
-        const subtotal = parseFloat(fila.children[3].textContent);
-        productos.push({ nombre, cantidad, precio, subtotal });
-        guardarProductoEnLocalStorage(nombre, nombre, precio);
+    document.querySelectorAll("#factura tbody tr").forEach(fila => {
+        const nombre = fila.children[0].querySelector("input")?.value || "";
+        const cantidad = parseFloat(fila.children[1].querySelector("input")?.value) || 0;
+        const precio = parseFloat(fila.children[2].querySelector("input")?.value) || 0;
+        const subtotal = parseFloat(fila.children[3].textContent) || 0;
+        const id = fila.getAttribute("data-id") || "";
+        productos.push({ id, nombre, cantidad, precio, subtotal });
     });
 
-    const numero = document.getElementById("numeroFactura").value;
-    const iva = parseFloat(document.getElementById("ivaPorcentaje").value);
-    const totalSinIVA = parseFloat(document.getElementById("total").textContent.replace("Total: €", ""));
-    const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", ""));
-    const fecha = new Date().toISOString();
+    const total = parseFloat(document.getElementById("total").textContent.replace("Total: €", "")) || 0;
+    const iva = parseFloat(document.getElementById("ivaPorcentaje").value) || 0;
+    const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", "")) || 0;
+    const numeroFactura = document.getElementById("numeroFactura").value || "";
 
     const factura = {
-        numero,
-        fecha,
+        numero: numeroFactura,
         productos,
+        total,
         iva,
-        totalSinIVA,
-        totalConIVA
+        totalConIVA,
+        fecha: new Date().toISOString()
     };
 
-    let facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
-    facturas.push(factura);
-    localStorage.setItem("facturasGuardadas", JSON.stringify(facturas));
+    localStorage.setItem("facturaGuardada", JSON.stringify(factura));
     alert("Factura guardada en localStorage.");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    actualizarSugerencias();
-});
 </script>
-
 </body>
 </html>
