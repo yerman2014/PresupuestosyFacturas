@@ -66,14 +66,7 @@
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-  
-@media print {
-  .no-print {
-    display: none !important;
-  }
-}
-
-</style>
+  </style>
 </head>
 <body>
 <script>
@@ -151,7 +144,7 @@
       </thead>
       <tbody></tbody>
     </table>
-    <button class="no-print">Agregar producto</button>
+    <button onclick="agregarFila()">Agregar producto</button>
     <div class="total" id="total">Total: €0.00</div>
     <div style="margin-top: 20px;">
       <label for="ivaPorcentaje"><strong>IVA (%):</strong></label>
@@ -160,9 +153,9 @@
     <div class="total" id="totalConIVA">Total con IVA: €0.00</div>
   </div>
 
-  <button class="no-print">Guardar factura en localStorage</button>
-<button class="no-print">Guardar como PDF</button>
-  <button class="no-print">Cerrar sesión</button>
+  <button onclick="guardarFacturaEnLocalStorage()">Guardar factura en localStorage</button>
+<button class="btn" onclick="guardarPDF()">Guardar como PDF</button>
+  <button onclick="logout()">Cerrar sesión</button>
 
   <script>
     function toggleSection(id) {
@@ -254,7 +247,7 @@
         <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
         <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
         <td class="subtotal">0.00</td>
-        <td><button class="no-print">Eliminar</button></td>
+        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
       `;
       tabla.appendChild(fila);
       guardarFacturaEnLocalStorage();calcularTotal();
@@ -381,7 +374,7 @@ function crearFilaProducto(nombre = "", cantidad = 1, precio = 0, id = "") {
         <td><input type="number" value="${cantidad}" min="1" onchange="calcularTotal()"></td>
         <td><input type="number" value="${precio}" min="0" step="0.01" onchange="calcularTotal()"></td>
         <td class="subtotal">${subtotal}</td>
-        <td><button class="no-print">Eliminar</button></td>
+        <td><button onclick="eliminarFila(this)">Eliminar</button></td>
     `;
     tabla.appendChild(fila);
     calcularTotal();
