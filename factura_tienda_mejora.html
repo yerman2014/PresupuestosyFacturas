@@ -241,19 +241,26 @@
       }
     }
 
-    function agregarFila() {
-      const tabla = document.querySelector("#factura tbody");
-      const fila = document.createElement("tr");
-      fila.innerHTML = `
-        <td><input list="sugerenciasProductos" class="productoInput" placeholder="Producto" oninput="autocompletarProducto(this)"><datalist id="sugerenciasProductos"></datalist></td>
-        <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
-        <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
-        <td class="subtotal">0.00</td>
-         <button onclick="eliminarFila(this)" style="color: red; font-weight: bold;">✖</button>
-      `;
-      tabla.appendChild(fila);
-      guardarFacturaEnLocalStorage();calcularTotal();
-    }
+   function agregarFila() {
+  const tabla = document.querySelector("#factura tbody");
+  const fila = document.createElement("tr");
+  fila.innerHTML = `
+    <td>
+      <input list="sugerenciasProductos" class="productoInput" placeholder="Producto" oninput="autocompletarProducto(this)">
+      <datalist id="sugerenciasProductos"></datalist>
+    </td>
+    <td><input type="number" value="1" min="1" onchange="calcularTotal()"></td>
+    <td><input type="number" value="0" min="0" step="0.01" onchange="calcularTotal()"></td>
+    <td class="subtotal">0.00</td>
+    <td>
+      <button onclick="eliminarFila(this)" class="no-print" style="color: red; font-weight: bold;">✖</button>
+    </td>
+  `;
+  tabla.appendChild(fila);
+  guardarFacturaEnLocalStorage();
+  calcularTotal();
+}
+
 
     function eliminarFila(btn) {
       btn.closest("tr").remove();
