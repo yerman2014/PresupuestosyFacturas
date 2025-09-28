@@ -286,17 +286,22 @@
     }
     }
 
-    function guardarPDF() {
-      const numero = document.getElementById("numeroFactura").value;
-      localStorage.setItem("numeroFactura", numero);
-      const element = document.getElementById("contenidoFactura");
-      html2pdf().set({
-        margin: 10,
-        filename: `Factura_${numero}.pdf`,
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).from(element).save();
-    }
+ function guardarPDF() {
+  const numero = document.getElementById("numeroFactura").value;
+  localStorage.setItem("numeroFactura", numero);
+  const element = document.getElementById("contenidoFactura");
+
+  const opt = {
+    margin:       0.5, // pulgadas
+    filename:     `Factura_${numero}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(element).save();
+}
+
 
     function logout() {
       localStorage.removeItem("usuario_logueado");
