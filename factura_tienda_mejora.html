@@ -15,19 +15,7 @@
 
   
   <title>Factura - Mi Tienda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
-function cargarDocumentoSeleccionado(documento) {
-    // Lógica para cargar el documento en el panel principal
-    // ...
-
-    // Ocultar el panel de documentos después de cargar
-    const panelDocumentos = document.getElementById("panelDocumentos");
-    if (panelDocumentos) {
-        panelDocumentos.style.display = "none";
-    }
-}
-
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -103,18 +91,6 @@ function cargarDocumentoSeleccionado(documento) {
     sessionStorage.clear(); // Limpia por seguridad
     window.location.href = "index.html";
   }
-
-function cargarDocumentoSeleccionado(documento) {
-    // Lógica para cargar el documento en el panel principal
-    // ...
-
-    // Ocultar el panel de documentos después de cargar
-    const panelDocumentos = document.getElementById("panelDocumentos");
-    if (panelDocumentos) {
-        panelDocumentos.style.display = "none";
-    }
-}
-
 </script>
 
 
@@ -122,6 +98,8 @@ function cargarDocumentoSeleccionado(documento) {
     <button onclick="toggleSection('tiendaConfig')">Mostrar/Ocultar configuración de tienda</button>
     <button onclick="toggleSection('clienteConfig')">Mostrar/Ocultar configuración de cliente</button>
     <button onclick="toggleSection('tipoDocumentoContainer')">Mostrar/Ocultar tipo de documento</button>
+<button onclick="toggleSection('panelDocumentos')">Visualizar documentos</button>
+
 
     <div id="tiendaConfig" style="display:none;">
       <input id="tiendaNombre" placeholder="Nombre de la tienda" type="text"/>
@@ -377,19 +355,7 @@ function guardarPDF() {
       tipoDocumentoSelect.addEventListener("change", actualizarTipoDocumento);
       actualizarTipoDocumento();
     });
-  
-function cargarDocumentoSeleccionado(documento) {
-    // Lógica para cargar el documento en el panel principal
-    // ...
-
-    // Ocultar el panel de documentos después de cargar
-    const panelDocumentos = document.getElementById("panelDocumentos");
-    if (panelDocumentos) {
-        panelDocumentos.style.display = "none";
-    }
-}
-
-</script>
+  </script>
 
 <script>
 // === PRODUCTOS CON LOCALSTORAGE Y AUTOCOMPLETADO ===
@@ -477,21 +443,32 @@ function guardarFacturaEnLocalStorage() {
 document.addEventListener("DOMContentLoaded", function () {
     actualizarSugerencias();
 });
-
-function cargarDocumentoSeleccionado(documento) {
-    // Lógica para cargar el documento en el panel principal
-    // ...
-
-    // Ocultar el panel de documentos después de cargar
-    const panelDocumentos = document.getElementById("panelDocumentos");
-    if (panelDocumentos) {
-        panelDocumentos.style.display = "none";
-    }
-}
-
 </script>
 
 <button onclick="window.print()" class="no-print">🖨️ Imprimir PDF</button>
 <button onclick="logout()" class="no-print">Cerrar sesión</button>
+
+<script>
+function cargarDocumentoDesdePanel(index) {
+  const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+  const factura = facturas[index];
+  if (!factura) return;
+
+  document.getElementById("numeroFactura").value = factura.numero || "";
+  document.getElementById("ivaPorcentaje").value = factura.iva || 21;
+
+  const tbody = document.querySelector("#factura tbody");
+  tbody.innerHTML = "";
+  factura.productos.forEach(p => {
+    crearFilaProducto(p.nombre, p.cantidad, p.precio);
+  });
+
+  calcularTotal();
+
+  // Ocultar el panel de documentos
+  document.getElementById("panelDocumentos").style.display = "none";
+}
+</script>
+
 </body>
 </html>
