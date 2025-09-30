@@ -424,6 +424,7 @@ function guardarFacturaEnLocalStorage() {
     const totalSinIVA = parseFloat(document.getElementById("total").textContent.replace("Total: €", ""));
     const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", ""));
     const fecha = new Date().toISOString();
+    const tipo = document.getElementById("tipoDocumento").value; // 👈 Nuevo
 
     const factura = {
         numero,
@@ -431,13 +432,13 @@ function guardarFacturaEnLocalStorage() {
         productos,
         iva,
         totalSinIVA,
-        totalConIVA
+        totalConIVA,
+        tipo // 👈 Guardamos el tipo
     };
 
     let facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
     facturas.push(factura);
     localStorage.setItem("facturasGuardadas", JSON.stringify(facturas));
-    
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -508,7 +509,7 @@ function cargarDocumentos(panel, tipoFiltro) {
   tbody.innerHTML = "";
   const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
   facturas.forEach((doc, index) => {
-    const tipo = document.getElementById("tipoDocumento").value || "factura";
+    const tipo = doc.tipo || "factura"; // 👈 usar el guardado
     if (tipoFiltro && tipoFiltro !== tipo) return;
     const fila = document.createElement("tr");
     fila.innerHTML = `
@@ -524,7 +525,30 @@ function cargarDocumentos(panel, tipoFiltro) {
     tbody.appendChild(fila);
   });
 }
+3. Al cargar un documento, restaurar también el tipo
+En cargarDocumento añade esto:
 
+js
+Copiar código
+function cargarDocumento(index) {
+  const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
+  const doc = facturas[index];
+  document.getElementById("numeroFactura").value = doc.numero;
+  document.getElementById("ivaPorcentaje").value = doc.iva;
+
+  // 👇 Restaurar tipo de documento
+  if (doc.tipo) {
+    document.getElementById("tipoDocumento").value = doc.tipo;
+    document.getElementById("tipoDocumento").dispatchEvent(new Event("change"));
+  }
+
+  const tbody = document.querySelector("#factura tbody");
+  tbody.innerHTML = "";
+  doc.productos.forEach(p => {
+    crearFilaProducto(p.nombre, p.cantidad, p.precio);
+  });
+  calcularTotal();
+}
 function cargarDocumento(index) {
   const facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
   const doc = facturas[index];
