@@ -424,23 +424,25 @@ function guardarFacturaEnLocalStorage() {
     const totalSinIVA = parseFloat(document.getElementById("total").textContent.replace("Total: €", ""));
     const totalConIVA = parseFloat(document.getElementById("totalConIVA").textContent.replace("Total con IVA: €", ""));
     const fecha = new Date().toISOString();
-    const tipo = document.getElementById("tipoDocumento").value; // 👈 Nuevo
+    const tipo = document.getElementById("tipoDocumento").value;
+
+    // Generar un ID único (ej: presupuesto_0001_1696012345678)
+    const id = `${tipo}_${numero}_${Date.now()}`;
 
     const factura = {
+        id, // 👈 nuevo campo
         numero,
         fecha,
         productos,
         iva,
         totalSinIVA,
         totalConIVA,
-        tipo // 👈 Guardamos el tipo
+        tipo
     };
 
     let facturas = JSON.parse(localStorage.getItem("facturasGuardadas") || "[]");
     facturas.push(factura);
     localStorage.setItem("facturasGuardadas", JSON.stringify(facturas));
-}
-
 document.addEventListener("DOMContentLoaded", function () {
     actualizarSugerencias();
 });
